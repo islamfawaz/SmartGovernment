@@ -3,7 +3,7 @@ using E_Government.Infrastructure.EGovernment_Unified;
 using E_Government.Infrastructure.Generic_Repository;
 using System.Collections.Concurrent;
 
-namespace E_Government.Infrastructure.UnitOfWork
+namespace E_Government.Infrastructure
 {
    public class UnitOfWork : IUnitOfWork
     {

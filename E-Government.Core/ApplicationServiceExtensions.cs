@@ -2,17 +2,21 @@
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.ServiceContracts;
 using E_Government.Core.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace E_Government.Application
 {
     public static class ApplicationServiceExtensions
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        // In the ServiceCollectionExtensions.cs file
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
         {
-            // No services to register yet, but keep the method for future use
-            services.AddScoped<IBillingService, BillingService>();
+            // If this is defined elsewhere, make sure to add the correct using statement
+            // Otherwise, you can define it here to call the original method via reflection
 
+         
             return services;
         }
     }

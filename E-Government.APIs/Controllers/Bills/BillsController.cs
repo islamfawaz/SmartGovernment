@@ -1,9 +1,7 @@
 ﻿using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
 using E_Government.UI.Controllers.Base;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stripe.Billing;
 
 namespace E_Government.UI.Controllers.Bills
 {

@@ -2,31 +2,34 @@
 using E_Government.Core.Domain.RepositoryContracts.Infrastructure;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.ServiceContracts;
+using E_Government.Core.Services;
 using E_Government.Infrastructure.EGovernment_Unified;
 using E_Government.Infrastructure.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace E_Government.Infrastructure
 {
-    public static class InfrastructureServiceExtensions
+    public class DependencyInjection
     {
         public static IServiceCollection AddInfrastructure(
-            this IServiceCollection services,
-            IConfiguration configuration) // This requires the parameter
+             IServiceCollection services,
+            IConfiguration configuration)
         {
-            // Register only UnifiedDbContext
+            // تسجيل DbContext
             services.AddDbContext<UnifiedDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("EGovernment_Unified")));
 
-            // Register Identity
-            services.AddIdentity<ApplicationUser, IdentityRole<string>>()
-                .AddEntityFrameworkStores<UnifiedDbContext>()
-                .AddDefaultTokenProviders();
+            // تسجيل Identity
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<UnifiedDbContext>();
 
-            // Register other services
+
+            // تسجيل IUnitOfWork و الخدمات الأخرى
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // تسجيل خدمات أخرى
             services.AddScoped<SafeDeleteService>();
             services.AddScoped<IBillNumberGenerator, BillNumberGenerator>();
             services.AddScoped<IPaymentService, PaymentService>();
@@ -34,7 +37,6 @@ namespace E_Government.Infrastructure
             services.AddScoped<IDbInitializer, ApplicationDbInitializer>();
 
             return services;
-
         }
     }
 }
