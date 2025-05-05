@@ -1,21 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>E_Government.Core</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- Added FrameworkReference for ASP.NET Core types like IFormFile -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-    <PackageReference Include="Stripe.net" Version="48.1.0" />
+    <!-- Microsoft.AspNetCore.Http.Features is included via FrameworkReference -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" /> <!-- Updated -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" /> <!-- Updated -->
+    <PackageReference Include="Stripe.net" Version="45.0.0" /> <!-- Updated -->
   </ItemGroup>
 
 </Project>
-
-
-

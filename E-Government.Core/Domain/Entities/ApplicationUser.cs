@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace E_Government.Core.Domain.Entities
 {
-    public class ApplicationUser :IdentityUser<string>
+    public class ApplicationUser :IdentityUser
     {
          public string NID { get; set; }        //public string State { get; set; }
         public string  Address { get; set; }

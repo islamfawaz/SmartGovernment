@@ -10,17 +10,28 @@ using System.Threading.Tasks;
 
 namespace E_Government.UI.Controllers.BillsPayment
 {
+    /// <summary>
+    /// Controller for handling bill payment operations.
+    /// </summary>
     [Route("api/[controller]")]
-
     public class PaymentController : ApiControllerBase
     {
         private readonly IPaymentService _paymentService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PaymentController"/> class.
+        /// </summary>
+        /// <param name="paymentService">The payment service to handle payment operations.</param>
         public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }
 
+        /// <summary>
+        /// Initiates a bill payment.
+        /// </summary>
+        /// <param name="request">The bill payment request details.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.</returns>
         [HttpPost("initiate-payment")]
         public async Task<IActionResult> InitiateBillPayment([FromBody] BillPaymentRequest request)
         {
@@ -41,6 +52,10 @@ namespace E_Government.UI.Controllers.BillsPayment
             }
         }
 
+        /// <summary>
+        /// Handles Stripe payment webhooks.
+        /// </summary>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the webhook processing.</returns>
         [HttpPost("webhook")]
         public async Task<IActionResult> HandlePaymentWebhook()
         {
@@ -73,6 +88,11 @@ namespace E_Government.UI.Controllers.BillsPayment
             }
         }
 
+        /// <summary>
+        /// Checks the status of a payment.
+        /// </summary>
+        /// <param name="paymentIntentId">The ID of the payment intent.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the payment status details.</returns>
         [HttpGet("payment-status/{paymentIntentId}")]
         public async Task<IActionResult> CheckPaymentStatus(string paymentIntentId)
         {

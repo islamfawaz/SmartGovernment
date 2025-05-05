@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Infrastructure.EGovernment_Unified
 {
-   public class UnifiedDbContext : IdentityDbContext<ApplicationUser, IdentityRole<string>, string>
+   public class UnifiedDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>
     {
 
         public UnifiedDbContext(DbContextOptions<UnifiedDbContext> dbContext) :base(dbContext)

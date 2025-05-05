@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>E_Government.Application</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Add any Application layer specific packages here, e.g., MediatR, FluentValidation, AutoMapper -->
+  <!-- Example: -->
+  <!-- <PackageReference Include="MediatR" Version="12.3.0" /> -->
+  <!-- <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" /> -->
+
+</Project>

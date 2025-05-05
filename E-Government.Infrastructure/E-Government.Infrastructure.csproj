@@ -1,33 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	  <RootNamespace>E_Government.Infrastructure</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<!-- <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> Removed as direct reference is preferred -->
+		<RootNamespace>E_Government.Infrastructure</RootNamespace>
 
-  <ItemGroup>
-    <Compile Include="EGovernment_Unified\Seeds\metersReading.json" />
-  </ItemGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<!-- Removed Compile Include for json file, as it's typically content -->
+	<ItemGroup>
+	  <None Include="EGovernment_Unified\Seeds\metersReading.json">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Updated Package Versions for .NET 8 -->
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.5.1" /> <!-- Check latest compatible version -->
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EGovernment_Unified\Migration\" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\E-Government.Application\E-Government.Application.csproj" />
+		<ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="EGovernment_Unified\Migration\" />
+	</ItemGroup>
+
+
+	<!-- Removed Custom Build Target as it's no longer needed with project references -->
+	<!-- <Target Name="CopyInfrastructureDllAfterBuild" AfterTargets="Build"> ... </Target> -->
+
 
 </Project>

@@ -1,75 +1,44 @@
-﻿using E_Government.Application;
+// E-Government.Mediator/ServiceCollectionExtensions.cs
+using E_Government.Application; // Assuming AddApplicationService is here
+using E_Government.Infrastructure; // Add direct reference to Infrastructure
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Reflection;
 
 namespace E_Government.Mediator
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Registers services from Application and Infrastructure layers.
+        /// This acts as the Composition Root for dependency injection.
+        /// </summary>
+        /// <param name="services">The IServiceCollection to add services to.</param>
+        /// <param name="configuration">The application configuration.</param>
+        /// <returns>The IServiceCollection so that additional calls can be chained.</returns>
         public static IServiceCollection AddAllLayers(
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // Add Core services - this depends on how you've set up your Core project
-            // Make sure this method exists or is properly imported
-            services.AddApplicationService();
+            Console.WriteLine("Mediator: Registering Application services...");
+            // Register services defined in the Application layer
+            // Ensure E_Government.Application has a corresponding extension method (e.g., AddApplicationServices)
+            // If AddApplicationService() comes from a different namespace/assembly, ensure it's referenced.
+            services.AddApplicationServices(configuration); // Pass configuration
+            Console.WriteLine("Mediator: Application services registered.");
 
-            // Add Infrastructure services
-            services.AddInfrastructureServices(configuration);
+            Console.WriteLine("Mediator: Registering Infrastructure services...");
+            // Register services defined in the Infrastructure layer
+            // This requires the Mediator project to have a project reference to the Infrastructure project.
+            services.AddInfrastructureServices(configuration); // Call the extension method from E_Government.Infrastructure
+            Console.WriteLine("Mediator: Infrastructure services registered.");
 
-            return services;
-        }
-
-        private static IServiceCollection AddInfrastructureServices(
-            this IServiceCollection services,
-            IConfiguration configuration)
-        {
-            try
-            {
-                // Register CustomerWithMetersSpec with its string parameter
-                var requiredParameter = configuration["RequiredStringParameter"]; // Alternative to GetValue
-
-                // Get the type using assembly qualified name to be more specific
-                var coreAssembly = Assembly.Load("E_Government.Core");
-                var specType = coreAssembly.GetType("E_Government.Core.Domain.Specification.Bills.CustomerWithMetersSpec");
-
-                if (specType != null)
-                {
-                    services.AddTransient(provider =>
-                        Activator.CreateInstance(specType, requiredParameter)
-                    );
-                }
-
-                // Load Infrastructure assembly
-                var infrastructureAssembly = Assembly.Load("E_Government.Infrastructure");
-                var startupType = infrastructureAssembly.GetType("E_Government.Infrastructure.StartupSetup");
-
-                if (startupType != null)
-                {
-                    var setupMethod = startupType.GetMethod("AddInfrastructureToServices");
-                    setupMethod?.Invoke(null, new object[] { services, configuration });
-                }
-                else
-                {
-                    // If StartupSetup doesn't exist, try the old class
-                    var diType = infrastructureAssembly.GetType("E_Government.Infrastructure.DependencyInjection");
-                    if (diType != null)
-                    {
-                        var instance = Activator.CreateInstance(diType);
-                        var method = diType.GetMethod("AddInfrastructureServices");
-                        method?.Invoke(instance, new object[] { services, configuration });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Consider logging the exception
-                Console.WriteLine($"Error registering services: {ex.Message}");
-            }
+            // Add any Mediator-specific services here if needed
 
             return services;
         }
+
+        // Note: The previous private AddInfrastructureServices method that used Assembly.Load
+        // has been removed as we now directly call the method from the referenced Infrastructure project.
     }
 }
+

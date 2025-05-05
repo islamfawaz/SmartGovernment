@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace E_Government.Core.Domain.Specification.Bills
 {
-    class MeterReadingSpecs :BaseSpecification<MeterReading>
+    public class MeterReadingSpecs :BaseSpecification<MeterReading>
     {
         // For single meter reading by ID
         public MeterReadingSpecs(int readingId)
