@@ -19,6 +19,12 @@ namespace E_Government.APIs
             var services = builder.Services;
             var configuration = builder.Configuration;
 
+            // In your Program.cs or Startup.cs
+            configuration.AddEnvironmentVariables();
+
+            // Access values like:
+            var stripeSecret = Environment.GetEnvironmentVariable("sk_test_51QTN1AK1FEwOxerZmbpIP1W9r6GQdcLhxEj92AEz3CdnuZVVNYrfrkc1PSOPG0iJoWZRCQoY8xo47IjsbFo4Upec00rQBUfx3k");
+
             Console.WriteLine("API: Configuring services...");
 
             // Add services to the container.
