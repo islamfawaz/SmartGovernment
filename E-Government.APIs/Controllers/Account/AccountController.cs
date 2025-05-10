@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_Government.UI.Controllers.Account
+namespace E_Government.APIs.Controllers.Account
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class AccountController : ApiControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;

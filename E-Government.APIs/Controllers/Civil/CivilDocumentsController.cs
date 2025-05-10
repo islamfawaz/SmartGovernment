@@ -45,5 +45,12 @@ namespace E_Government.APIs.Controllers.Civil
             await _service.AddAttachmentAsync(requestId, fileType, filePath);
             return Ok();
         }
+
+        [HttpPut("request/{requestId}/status")]
+        public async Task<IActionResult> UpdateStatus(Guid requestId, [FromBody] UpdateRequestStatusDto dto)
+        {
+            await _service.UpdateRequestStatusAsync(requestId, dto.Status, dto.Note);
+            return Ok();
+        }
     }
 } 
