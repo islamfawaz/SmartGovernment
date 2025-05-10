@@ -26,10 +26,10 @@ namespace E_Government.Infrastructure
           await  _dbContext.DisposeAsync();
         }
 
-        public IGenericRepository<TEntity> GetRepository<TEntity>()
+        public IGenericRepository<TEntity,TKey> GetRepository<TEntity,TKey>()
             where TEntity : class
         {
-            return (IGenericRepository<TEntity>)_repositories.GetOrAdd(typeof(TEntity).Name, new GenericRepository<TEntity>(_dbContext));
+            return (IGenericRepository<TEntity, TKey>)_repositories.GetOrAdd(typeof(TEntity).Name, new GenericRepository<TEntity, TKey>(_dbContext));
 
         }
     }

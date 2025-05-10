@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Infrastructure.Generic_Repository
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity>
+    public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey>
         where TEntity : class
     {
         private readonly UnifiedDbContext _dbContext;
@@ -21,7 +21,7 @@ namespace E_Government.Infrastructure.Generic_Repository
             return await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<TEntity?> GetAsync(int id)
+        public async Task<TEntity?> GetAsync(TKey id)
         {
             return await _dbContext.Set<TEntity>().FindAsync(id);
         }
@@ -35,6 +35,7 @@ namespace E_Government.Infrastructure.Generic_Repository
             await _dbContext.AddAsync(entity);
         }
 
+
         public void Delete(TEntity entity)
         {
             _dbContext.Remove(entity);
@@ -45,51 +46,21 @@ namespace E_Government.Infrastructure.Generic_Repository
             _dbContext.Update(entity);
         }
 
-        // New methods for Specification pattern
-        public async Task<TEntity?> GetFirstOrDefaultWithSpecAsync(ISpecification<TEntity> spec)
+        // New include-based methods
+        public async Task<TEntity?> GetByIdWithIncludeAsync(TKey id, Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null)
         {
-            return await ApplySpecification(spec).FirstOrDefaultAsync();
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            if (include != null)
+                query = include(query);
+            return await query.FirstOrDefaultAsync(e => EF.Property<TKey>(e, "Id")!.Equals(id));
         }
 
-        public async Task<IReadOnlyList<TEntity>> GetAllWithSpecAsync(ISpecification<TEntity> spec)
+        public async Task<IEnumerable<TEntity>> GetAllWithIncludeAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null)
         {
-            return await ApplySpecification(spec).ToListAsync();
-        }
-
-        public async Task<int> CountAsync(ISpecification<TEntity> spec)
-        {
-            return await ApplySpecification(spec, true).CountAsync();
-        }
-
-        private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> spec, bool forCount = false)
-        {
-            var query = _dbContext.Set<TEntity>().AsQueryable();
-
-            // Apply criteria (WHERE clause)
-            if (spec.Criteria != null)
-            {
-                query = query.Where(spec.Criteria);
-            }
-
-            // Apply includes (eager loading)
-            query = spec.Includes.Aggregate(query,
-                (current, include) => current.Include(include));
-
-            // Skip ordering if we're just counting
-            if (!forCount)
-            {
-                // Apply ordering
-                if (spec.OrderBy != null)
-                {
-                    query = query.OrderBy(spec.OrderBy);
-                }
-                else if (spec.OrderByDescending != null)
-                {
-                    query = query.OrderByDescending(spec.OrderByDescending);
-                }
-            }
-
-            return query;
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+            if (include != null)
+                query = include(query);
+            return await query.ToListAsync();
         }
     }
 }

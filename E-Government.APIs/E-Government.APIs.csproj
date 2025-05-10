@@ -10,28 +10,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Scrutor" Version="4.2.2" />
-    <PackageReference Include="Stripe.net" Version="45.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Stripe.net" Version="48.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 	<PropertyGroup>
 		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
-    <!-- Removed Mediator reference -->
-    <!-- <ProjectReference Include="..\E-Government.Mediator\E-Government.Mediator.csproj" /> -->
-    <!-- Added direct references for Scrutor scanning -->
-    <ProjectReference Include="..\E-Government.Application\E-Government.Application.csproj" />
-    <ProjectReference Include="..\E-Government.Infrastructure\E-Government.Infrastructure.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.*.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\E-Government.Application\E-Government.Application.csproj" />
+		<ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
+		<ProjectReference Include="..\E-Government.Infrastructure\E-Government.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -22,7 +22,7 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
 
             builder.Property(u => u.NID)
                 .IsRequired()
-                .HasMaxLength(30)
+                .HasMaxLength(50)
                 .IsFixedLength()
                 .ValueGeneratedNever();
 

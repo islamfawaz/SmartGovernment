@@ -1,11 +1,13 @@
 // E-Government.Infrastructure/DependencyInjection.cs
-using E_Government.Core.Domain.RepositoryContracts.Infrastructure;
+using E_Government.Core.Domain.Entities; // Added for ApplicationUser
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.ServiceContracts;
+using E_Government.Core.ServiceContracts; // Added for IBillNumberGenerator
 using E_Government.Core.ServiceContracts.Common;
 using E_Government.Infrastructure.EGovernment_Unified;
 using E_Government.Infrastructure.Generic_Repository; // Correct namespace for GenericRepository
-using E_Government.Infrastructure.Services;
+using E_Government.Infrastructure.Persistence.Repository; // Correct namespace for UnitOfWork
+using E_Government.Infrastructure.Services; // Added for BillNumberGenerator implementation
+using Microsoft.AspNetCore.Identity; // Added for Identity services
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,12 +20,10 @@ namespace E_Government.Infrastructure
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             // --- Register DbContext ---
-            // Ensure you have a connection string named "DefaultConnection" in your appsettings.json
-            var connectionString = configuration.GetConnectionString("EGovernment_Unified"); // Corrected name
+            var connectionString = configuration.GetConnectionString("EGovernment_Unified2");
             if (string.IsNullOrEmpty(connectionString))
             {
-                // Throw an explicit exception if the connection string is missing
-                throw new InvalidOperationException("Connection string 'EGovernment_Unified' not found in configuration. Please ensure it is set in appsettings.json or environment variables.");
+                throw new InvalidOperationException("Connection string 'EGovernment_Unified' not found...");
             }
             else
             {
@@ -33,37 +33,50 @@ namespace E_Government.Infrastructure
                 Console.WriteLine("UnifiedDbContext registered.");
             }
 
+            // --- Register ASP.NET Core Identity ---
+            Console.WriteLine("Registering ASP.NET Core Identity services...");
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<UnifiedDbContext>()
+            .AddDefaultTokenProviders();
+            Console.WriteLine("ASP.NET Core Identity services registered.");
+
             // --- Register UnitOfWork and Generic Repository ---
             Console.WriteLine("Registering UnitOfWork and GenericRepository...");
-            // UnitOfWork is often Scoped to align with the DbContext lifetime
-            services.AddScoped<IUnitOfWork, E_Government.Infrastructure.Persistence.Repository.UnitOfWork>(); // Use fully qualified name
-            // GenericRepository is also typically Scoped
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWork, E_Government.Infrastructure.Persistence.Repository.UnitOfWork>();
+
             Console.WriteLine("UnitOfWork and GenericRepository registered.");
 
+            // --- Register Specific Infrastructure Services ---
+            Console.WriteLine("Registering specific infrastructure services (e.g., BillNumberGenerator)...");
             services.AddScoped<IPaymentService, PaymentService>();
-            services.AddScoped<IBillNumberGenerator, BillNumberGenerator>();
+            services.AddScoped<IBillNumberGenerator, BillNumberGenerator>(); // Added registration
+            services.AddScoped<ITokenService, TokenService>(); // Added registration
+
+            // TODO: Add registration for IPaymentService implementation here if not covered by marker interfaces
+            Console.WriteLine("Specific infrastructure services registered.");
+
             // --- Register services from this assembly using Marker Interfaces ---
+            // Note: If BillNumberGenerator implements IScopedService, the explicit registration above is still recommended for clarity
+            // but the marker interface scan might also pick it up.
             Assembly assembly = Assembly.GetExecutingAssembly();
             Console.WriteLine($"Scanning Infrastructure assembly ({assembly.GetName().Name}) for marker interface registrations...");
-
-            // Register Transient Services
             RegisterServicesWithLifetime<ITransientService>(services, assembly, ServiceLifetime.Transient);
-            // Register Scoped Services
             RegisterServicesWithLifetime<IScopedService>(services, assembly, ServiceLifetime.Scoped);
-            // Register Singleton Services
             RegisterServicesWithLifetime<ISingletonService>(services, assembly, ServiceLifetime.Singleton);
-
             Console.WriteLine("Marker interface scanning complete.");
-
-            // --- Add other Infrastructure specific registrations below ---
-            // Example: services.AddHttpClient(...);
 
             return services;
         }
 
         // --- Helper Methods (Unchanged) ---
-
         static void RegisterServicesWithLifetime<TMarkerInterface>(IServiceCollection services, Assembly assembly, ServiceLifetime lifetime)
         {
             var serviceTypes = assembly.GetTypes()

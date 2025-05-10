@@ -8,6 +8,6 @@ namespace E_Government.Core.ServiceContracts
 {
     public interface IBillNumberGenerator
     {
-        string Generate();
+        Task<string> Generate();
     }
 }

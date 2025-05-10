@@ -42,7 +42,7 @@ namespace E_Government.UI.Controllers.License
                   photo=photo,
             };
 
-        await _unitOfWork.GetRepository<DrivingLicense>().AddAsync(model);
+        await _unitOfWork.GetRepository<DrivingLicense, int>().AddAsync(model);
         await    _unitOfWork.CompleteAsync();
             return Ok();
         }
@@ -68,7 +68,7 @@ namespace E_Government.UI.Controllers.License
                      RenewalDate = renewDrivingDTO.RenewalDate
             };
 
-           await _unitOfWork.GetRepository<DrivingLicenseRenewal>().AddAsync(model);
+           await _unitOfWork.GetRepository<DrivingLicenseRenewal, int>().AddAsync(model);
             await _unitOfWork.CompleteAsync();
 
             return Ok();
@@ -91,7 +91,7 @@ namespace E_Government.UI.Controllers.License
             };
 
             
-          await  _unitOfWork.GetRepository<VehicleLicenseRenewal>().AddAsync(vehicleInfo);
+          await  _unitOfWork.GetRepository<VehicleLicenseRenewal, int>().AddAsync(vehicleInfo);
             await _unitOfWork.CompleteAsync();
 
             return Ok();
@@ -112,7 +112,7 @@ namespace E_Government.UI.Controllers.License
                 PaymentReceipt = dto.PaymentReceipt
             };
 
-       await   _unitOfWork.GetRepository<TrafficViolationPayment>().AddAsync(violation);
+       await   _unitOfWork.GetRepository<TrafficViolationPayment, int>().AddAsync(violation);
             await _unitOfWork.CompleteAsync();
 
 
@@ -138,7 +138,7 @@ namespace E_Government.UI.Controllers.License
                 OwnershipProof = dto.OwnershipProof
             };
 
-          await  _unitOfWork.GetRepository<VehicleOwner>().AddAsync(owner);
+          await  _unitOfWork.GetRepository<VehicleOwner, int>().AddAsync(owner);
             await _unitOfWork.CompleteAsync();
 
             return Ok();
@@ -159,7 +159,7 @@ namespace E_Government.UI.Controllers.License
                 PaymentMethod = dto.PaymentMethod
             };
 
-           await _unitOfWork.GetRepository<LicenseReplacementRequest>().AddAsync(request);
+           await _unitOfWork.GetRepository<LicenseReplacementRequest, int>().AddAsync(request);
             await _unitOfWork.CompleteAsync();
 
             return Ok();

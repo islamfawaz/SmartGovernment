@@ -37,7 +37,7 @@ namespace E_Government.UI.Controllers.Account
         [HttpGet("NID")]
         public ActionResult CheckNID(string NID)
         {
-            var user = _unitOfWork.GetRepository<ApplicationUser>().GetUserByNID(NID);
+            var user = _unitOfWork.GetRepository<ApplicationUser, string>().GetUserByNID(NID);
             return user == null ? NotFound() : Ok();
         }
 

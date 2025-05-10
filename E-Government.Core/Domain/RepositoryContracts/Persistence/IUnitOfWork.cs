@@ -9,7 +9,7 @@ namespace E_Government.Core.Domain.RepositoryContracts.Persistence
     public interface IUnitOfWork :IAsyncDisposable
 
     {
-        IGenericRepository<TEntity> GetRepository<TEntity>()
+        IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
             where TEntity : class;
             
 

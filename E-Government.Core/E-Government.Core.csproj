@@ -15,9 +15,13 @@
   <ItemGroup>
     <PackageReference Include="Mapster" Version="7.4.0" />
     <!-- Microsoft.AspNetCore.Http.Features is included via FrameworkReference -->
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" /> <!-- Updated -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" /> <!-- Updated -->
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" /> <!-- Updated -->
     <PackageReference Include="Stripe.net" Version="45.0.0" /> <!-- Updated -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Domain\RepositoryContracts\Infrastructure\" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,0 @@
-@E_Government.APIs_HostAddress = http://localhost:5294
-
-GET {{E_Government.APIs_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

@@ -36,7 +36,7 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
 
             builder.Property(b => b.Status)
                 .IsRequired()
-                .HasConversion<string>()
+                .HasConversion<int>()
                 .HasMaxLength(20);
 
             // Relationships

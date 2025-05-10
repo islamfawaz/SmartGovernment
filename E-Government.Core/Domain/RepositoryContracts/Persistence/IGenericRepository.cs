@@ -7,20 +7,18 @@ using System.Threading.Tasks;
 
 namespace E_Government.Core.Domain.RepositoryContracts.Persistence
 {
-   public interface IGenericRepository<TEntity>
+   public interface IGenericRepository<TEntity, TKey>
         where TEntity : class
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity ?>GetAsync(int id);
+        Task<TEntity?> GetAsync(TKey id);
         Task<ApplicationUser> GetUserByNID(string NID);
         Task AddAsync(TEntity entity);
 
         void Update(TEntity entity);
         void Delete(TEntity entity);
-        Task<IReadOnlyList<TEntity>> GetAllWithSpecAsync(ISpecification<TEntity> spec);
-        Task<TEntity?> GetFirstOrDefaultWithSpecAsync(ISpecification<TEntity> spec);
-
-        Task<int> CountAsync(ISpecification<TEntity> spec);
+        Task<TEntity?> GetByIdWithIncludeAsync(TKey id, Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null);
+        Task<IEnumerable<TEntity>> GetAllWithIncludeAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null);
 
     }
 }

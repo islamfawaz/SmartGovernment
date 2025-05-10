@@ -17,19 +17,19 @@ namespace E_Government.Infrastructure.Persistence.Repository
             _context = context;
         }
 
-        public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class
         {
             // Initialize cache if null
             if (_repositories == null) _repositories = new Hashtable();
 
-            var type = typeof(TEntity).Name;
+            var type = typeof(TEntity).Name + typeof(TKey).Name;
 
             // Check if repository already exists in cache
             if (!_repositories.ContainsKey(type))
             {
-                // If not, create a new instance of the GenericRepository<TEntity>
-                var repositoryType = typeof(GenericRepository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
+                // If not, create a new instance of the GenericRepository<TEntity, TKey>
+                var repositoryType = typeof(GenericRepository<,>);
+                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity), typeof(TKey)), _context);
 
                 // Add the new repository instance to the cache
                 if (repositoryInstance != null)
@@ -44,7 +44,7 @@ namespace E_Government.Infrastructure.Persistence.Repository
             }
 
             // Return the repository instance from the cache
-            return (IGenericRepository<TEntity>)_repositories[type]!;
+            return (IGenericRepository<TEntity, TKey>)_repositories[type]!;
         }
 
         public async Task<int> CompleteAsync()

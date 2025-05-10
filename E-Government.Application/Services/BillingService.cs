@@ -1,8 +1,6 @@
 ﻿// E-Government.Application/Services/BillingService.cs
 using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Infrastructure; // For IPaymentService
 using E_Government.Core.Domain.RepositoryContracts.Persistence; // For IUnitOfWork
-using E_Government.Core.Domain.Specification.Bills; // For CustomerWithMetersSpec, MeterReadingSpecs
 // using E_Government.Core.Domain.Specification.MeterReadings; // Removed, MeterReadingSpecs is in Bills namespace
 // using E_Government.Core.Domain.Specification.Users; // Removed, CustomerWithMetersSpec is in Bills namespace
 using E_Government.Core.DTO;
@@ -10,21 +8,22 @@ using E_Government.Core.ServiceContracts; // For IBillingService, IBillNumberGen
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using IPaymentService = E_Government.Core.ServiceContracts.IPaymentService;
 
 namespace E_Government.Application.Services
 {
-    public class BillingService : IBillingService
+    public class BillingServices : IBillingService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBillNumberGenerator _billNumberGenerator;
-        private readonly IPaymentService _paymentService;
-        private readonly ILogger<BillingService> _logger;
+        private readonly Core.ServiceContracts.IPaymentService _paymentService;
+        private readonly ILogger<BillingServices> _logger;
 
-        public BillingService(
+        public BillingServices(
             IUnitOfWork unitOfWork,
             IBillNumberGenerator billNumberGenerator,
             IPaymentService paymentService,
-            ILogger<BillingService> logger
+            ILogger<BillingServices> logger
             )
         {
             _unitOfWork = unitOfWork;
@@ -40,9 +39,9 @@ namespace E_Government.Application.Services
             {
                 _logger.LogInformation("Attempting to generate bill for NID: {NID}, Type: {Type}", request.NID, request.Type);
                 // 1. Validate customer with proper error handling
-                var userSpec = new CustomerWithMetersSpec(request.NID);
-                var user = await _unitOfWork.GetRepository<ApplicationUser>()
-                                .GetFirstOrDefaultWithSpecAsync(userSpec);
+                var user = (await _unitOfWork.GetRepository<ApplicationUser, string>()
+                    .GetAllWithIncludeAsync(q => q.Where(u => u.NID == request.NID).Include(u => u.Meters)))
+                    .FirstOrDefault();
 
                 if (user is null)
                 {
@@ -59,6 +58,10 @@ namespace E_Government.Application.Services
                 }
 
                 // 2. Validate user has confirmed email
+                if (!user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
+                }
                 if (!user.EmailConfirmed)
                 {
                     _logger.LogWarning("User {NID} email not confirmed.", user.NID);
@@ -90,9 +93,9 @@ namespace E_Government.Application.Services
                 _logger.LogInformation("Found active meter {MeterId} of type {Type} for user {NID}", meter.Id, meter.Type, user.NID);
 
                 // 4. Get latest reading with validation
-                var readingSpec = new MeterReadingSpecs(meter.Id);
-                var latestReading = await _unitOfWork.GetRepository<MeterReading>()
-                                        .GetFirstOrDefaultWithSpecAsync(readingSpec);
+                var latestReading = (await _unitOfWork.GetRepository<MeterReading, int>()
+                    .GetAllWithIncludeAsync(q => q.Where(r => r.MeterId == meter.Id).OrderByDescending(r => r.ReadingDate).Include(r => r.Meter)))
+                    .FirstOrDefault();
                 _logger.LogInformation("Latest reading for meter {MeterId} is {ReadingValue}", meter.Id, latestReading?.Value ?? 0);
 
                 // 5. Validate reading values
@@ -110,7 +113,7 @@ namespace E_Government.Application.Services
                 // 6. Create bill with all required fields
                 var bill = new Bill
                 {
-                    BillNumber = _billNumberGenerator.Generate(),
+                    BillNumber = await _billNumberGenerator.Generate(),
                     IssueDate = DateTime.UtcNow,
                     DueDate = DateTime.UtcNow.AddDays(30),
                     MeterId = meter.Id,
@@ -131,7 +134,7 @@ namespace E_Government.Application.Services
                 _logger.LogInformation("Created new bill {BillNumber} for meter {MeterId} with amount {Amount}", bill.BillNumber, bill.MeterId, bill.Amount);
 
                 // 7. Save bill
-                await _unitOfWork.GetRepository<Bill>().AddAsync(bill);
+                await _unitOfWork.GetRepository<Bill, int>().AddAsync(bill);
                 await _unitOfWork.CompleteAsync();
                 _logger.LogInformation("Saved bill {BillNumber} (ID: {BillId}) to database.", bill.BillNumber, bill.Id);
 
@@ -157,7 +160,7 @@ namespace E_Government.Application.Services
 
                 // 9. Update bill with payment info
                 bill.StripePaymentId = paymentResult.PaymentIntentId;
-                _unitOfWork.GetRepository<Bill>().Update(bill);
+                _unitOfWork.GetRepository<Bill, int>().Update(bill);
                 await _unitOfWork.CompleteAsync();
                 _logger.LogInformation("Updated bill {BillId} with Stripe Payment Intent ID {PaymentIntentId}", bill.Id, bill.StripePaymentId);
 
@@ -219,7 +222,7 @@ namespace E_Government.Application.Services
             {
                 _logger.LogInformation("Attempting to register meter for NID: {NID}, Type: {Type}", request.NID, request.Type);
                 // Validate User exists
-                var user = await _unitOfWork.GetRepository<ApplicationUser>().GetUserByNID(request.NID);
+                var user = await _unitOfWork.GetRepository<ApplicationUser, string>().GetUserByNID(request.NID);
 
                 if (user is null)
                 {
@@ -234,8 +237,7 @@ namespace E_Government.Application.Services
 
                 // Check if customer already has a meter of this type
                 // Consider a more efficient query if possible (e.g., using Specification pattern)
-                var existingMeters = await _unitOfWork.GetRepository<Meter>()
-                    .GetAllAsync(); // Get all meters first
+                var existingMeters = await _unitOfWork.GetRepository<Meter, int>().GetAllAsync(); // Get all meters first
 
                 var existingMeter = existingMeters
                     .FirstOrDefault(m => m.UserNID == request.NID && m.Type == request.Type);
@@ -262,7 +264,7 @@ namespace E_Government.Application.Services
                 };
                 _logger.LogInformation("Creating new meter {MeterNumber} of type {Type} for user {NID}", meter.MeterNumber, meter.Type, meter.UserNID);
 
-                await _unitOfWork.GetRepository<Meter>().AddAsync(meter);
+                await _unitOfWork.GetRepository<Meter, int>().AddAsync(meter);
                 await _unitOfWork.CompleteAsync();
                 _logger.LogInformation("Successfully registered meter {MeterNumber} (ID: {MeterId}) for user {NID}", meter.MeterNumber, meter.Id, meter.UserNID);
 

@@ -1,5 +1,4 @@
-﻿// GenerateBillRequestDto.cs
-using E_Government.Core.Domain.Entities;
+﻿using E_Government.Core.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 

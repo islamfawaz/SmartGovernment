@@ -28,11 +28,31 @@ namespace E_Government.Infrastructure.EGovernment_Unified
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<MeterReading> MeterReadings { get; set; }
+
+        public DbSet<CivilDocumentRequest> CivilDocumentRequests { get; set; }
+        public DbSet<CivilDocumentAttachment> CivilDocumentAttachments { get; set; }
+        public DbSet<CivilDocumentRequestHistory> CivilDocumentRequestHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(typeof(UnifiedDbContext).Assembly);
 
+            builder.Entity<CivilDocumentRequest>()
+                .HasMany(r => r.Attachments)
+                .WithOne(a => a.Request)
+                .HasForeignKey(a => a.RequestId);
+
+            builder.Entity<CivilDocumentRequest>()
+                .HasMany(r => r.History)
+                .WithOne(h => h.Request)
+                .HasForeignKey(h => h.RequestId);
+
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.Requests)
+                .WithOne()
+                .HasForeignKey(r => r.ApplicantNID)
+                .HasPrincipalKey(u => u.NID);
         }
     }
 }

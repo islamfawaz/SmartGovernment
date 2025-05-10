@@ -1,15 +1,41 @@
-﻿using E_Government.Core.ServiceContracts;
+﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.RepositoryContracts.Persistence;
+using E_Government.Core.ServiceContracts;
+using Microsoft.Extensions.Logging;
 
 namespace E_Government.Infrastructure.Services
 {
-    class BillNumberGenerator : IBillNumberGenerator
+    public class BillNumberGenerator : IBillNumberGenerator
     {
-        private static int _counter = 0;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<BillNumberGenerator> _logger;
 
-        public string Generate()
+        public BillNumberGenerator(
+            IUnitOfWork unitOfWork,
+            ILogger<BillNumberGenerator> logger)
         {
-            Interlocked.Increment(ref _counter);
-            return $"BL-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
+            _unitOfWork = unitOfWork;
+            _logger = logger;
+        }
+
+        public async Task<string> Generate()
+        {
+            try
+            {
+                var billRepo = _unitOfWork.GetRepository<Bill, int>();
+                var lastBill = (await billRepo.GetAllWithIncludeAsync(q => q.OrderByDescending(b => b.Id))).FirstOrDefault();
+
+                int nextNumber = (lastBill?.Id ?? 0) + 1;
+                string billNumber = $"BL-{DateTime.Now:yyyyMMdd}-{nextNumber:00000}";
+
+                _logger.LogInformation("تم إنشاء رقم فاتورة: {BillNumber}", billNumber);
+                return billNumber;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل في إنشاء رقم الفاتورة");
+                return $"BL-{DateTime.Now:yyyyMMdd}-ERR-{DateTime.Now.Ticks}";
+            }
         }
     }
 }

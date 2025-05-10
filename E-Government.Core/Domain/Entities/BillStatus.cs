@@ -2,10 +2,10 @@
 {
     public enum BillStatus
     {
-        Pending,        // معلقة
-        Paid,           // مدفوعة
-        PaymentFailed,  // فشل الدفع
-        Canceled,       // ملغية
-        Overdue         // متأخرة
+        Pending = 0,
+        Paid = 1,
+        Overdue = 2,
+        Cancelled = 3,
+        PaymentFailed = 4
     }
 }

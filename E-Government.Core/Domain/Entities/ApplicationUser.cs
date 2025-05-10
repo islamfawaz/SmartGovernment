@@ -16,6 +16,11 @@ namespace E_Government.Core.Domain.Entities
         public virtual ICollection<Meter> Meters { get; set; } = new List<Meter>();
         public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
+        public virtual ICollection<CivilDocumentRequest> Requests { get; set; } = new List<CivilDocumentRequest>();
+
+
+
+
     }
 
 }
