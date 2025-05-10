@@ -29,7 +29,13 @@ namespace E_Government.Infrastructure
             {
                 Console.WriteLine("Registering UnifiedDbContext...");
                 services.AddDbContext<UnifiedDbContext>(options =>
-                    options.UseSqlServer(connectionString));
+                    options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    }));
                 Console.WriteLine("UnifiedDbContext registered.");
             }
 

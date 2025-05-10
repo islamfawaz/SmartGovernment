@@ -20,7 +20,9 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configurations
 
             builder.Property(r => r.ApplicantNID)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(50)
+                .IsFixedLength()
+                .HasColumnType("nchar(50)");
 
             builder.Property(r => r.Relation)
                 .HasMaxLength(50);
@@ -30,7 +32,10 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configurations
                 .HasMaxLength(100);
 
             builder.Property(r => r.OwnerNID)
-                .HasMaxLength(20);
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsFixedLength()
+                .HasColumnType("nchar(50)");
 
             builder.Property(r => r.OwnerMotherName)
                 .HasMaxLength(100);
@@ -47,7 +52,9 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configurations
 
             builder.Property(r => r.ExtraFieldsJson)
                 .HasColumnName("ExtraFields")
-                .HasColumnType("nvarchar(max)");
+                .HasColumnType("nvarchar(max)")
+                .IsRequired(false)
+                .HasDefaultValue("{}");
 
             builder.HasMany(r => r.Attachments)
                    .WithOne(a => a.Request)
