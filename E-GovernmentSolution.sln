@@ -21,6 +21,49 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{1FB8D0C1-3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{B2D7A884-EE1F-426D-8BDB-B028FEF5DB6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{192C2966-2892-43F7-8723-F218097CDBBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{FFB7E712-D1E2-4B6C-A53F-69F40EF8DE1F}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\js\datatables-simple-demo.js = D:\Dashboard\js\datatables-simple-demo.js
+		D:\Dashboard\js\scripts.js = D:\Dashboard\js\scripts.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{90FFF578-7FAB-4F50-B9F4-1FC8CE9E99DB}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\css\styles.css = D:\Dashboard\css\styles.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{9D1CD948-446E-4092-8E5A-F22F24AD4902}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{4A0F5351-54A6-4410-83E6-4CF941E28020}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\assets\demo\chart-area-demo.js = D:\Dashboard\assets\demo\chart-area-demo.js
+		D:\Dashboard\assets\demo\chart-bar-demo.js = D:\Dashboard\assets\demo\chart-bar-demo.js
+		D:\Dashboard\assets\demo\chart-pie-demo.js = D:\Dashboard\assets\demo\chart-pie-demo.js
+		D:\Dashboard\assets\demo\datatables-demo.js = D:\Dashboard\assets\demo\datatables-demo.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{8BCA6B76-BD39-49E2-BDA5-2E80C178E68F}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\assets\img\error-404-monochrome.svg = D:\Dashboard\assets\img\error-404-monochrome.svg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdminDashboard", "AdminDashboard", "{269F2F59-3684-48CD-B4B0-DD844602FE33}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\401.html = D:\Dashboard\401.html
+		D:\Dashboard\404.html = D:\Dashboard\404.html
+		D:\Dashboard\500.html = D:\Dashboard\500.html
+		D:\Dashboard\charts.html = D:\Dashboard\charts.html
+		D:\Dashboard\index.html = D:\Dashboard\index.html
+		D:\Dashboard\layout-sidenav-light.html = D:\Dashboard\layout-sidenav-light.html
+		D:\Dashboard\layout-static.html = D:\Dashboard\layout-static.html
+		D:\Dashboard\login.html = D:\Dashboard\login.html
+		D:\Dashboard\password.html = D:\Dashboard\password.html
+		D:\Dashboard\register.html = D:\Dashboard\register.html
+		D:\Dashboard\tables.html = D:\Dashboard\tables.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +98,13 @@ Global
 		{840D5B46-99D5-4C4C-AB48-45782A90415C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{1FB8D0C1-37CD-4B0B-B8D0-23110A143035} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B2D7A884-EE1F-426D-8BDB-B028FEF5DB6F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{192C2966-2892-43F7-8723-F218097CDBBD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{FFB7E712-D1E2-4B6C-A53F-69F40EF8DE1F} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{90FFF578-7FAB-4F50-B9F4-1FC8CE9E99DB} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{9D1CD948-446E-4092-8E5A-F22F24AD4902} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{4A0F5351-54A6-4410-83E6-4CF941E28020} = {9D1CD948-446E-4092-8E5A-F22F24AD4902}
+		{8BCA6B76-BD39-49E2-BDA5-2E80C178E68F} = {9D1CD948-446E-4092-8E5A-F22F24AD4902}
+		{269F2F59-3684-48CD-B4B0-DD844602FE33} = {192C2966-2892-43F7-8723-F218097CDBBD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D4E54BEF-C40E-41F3-8371-F6E90C71CAB1}

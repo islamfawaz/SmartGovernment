@@ -5,14 +5,15 @@ using System.Collections.Generic;
 using E_Government.Core.DTO;
 using E_Government.Application.Services;
 using E_Government.UI.Controllers.Base;
+using E_Government.Core.ServiceContracts;
 
 namespace E_Government.APIs.Controllers.Civil
 {
     [ApiController]
     public class CivilDocumentsController : ApiControllerBase
     {
-        private readonly CivilDocumentsService _service;
-        public CivilDocumentsController(CivilDocumentsService service)
+        private readonly ICivilDocumentsService _service;
+        public CivilDocumentsController(ICivilDocumentsService service)
         {
             _service = service;
         }

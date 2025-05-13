@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using E_Government.Core.Domain.Entities;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
+using E_Government.Core.ServiceContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Application.Services
 {
-    public class CivilDocumentsService
+    public class CivilDocumentsService : ICivilDocumentsService
     {
         private readonly IUnitOfWork _unitOfWork;
         public CivilDocumentsService(IUnitOfWork unitOfWork)

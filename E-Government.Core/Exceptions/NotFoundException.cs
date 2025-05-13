@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace E_Government.Core.Exceptions
 {
-    class NotFoundException : Exception
+   public class NotFoundException : Exception
     {
         public NotFoundException():base()
         {

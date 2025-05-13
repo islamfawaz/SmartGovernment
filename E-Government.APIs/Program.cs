@@ -1,4 +1,5 @@
 using E_Government.Application.Services;
+using E_Government.Application.Services.License;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
 using E_Government.Infrastructure;
@@ -36,7 +37,8 @@ namespace E_Government.APIs
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
 
             services.AddScoped<IBillingService, BillingServices>();
-            services.AddScoped<CivilDocumentsService>();
+            services.AddScoped<ICivilDocumentsService, CivilDocumentsService>();
+            services.AddScoped<ILicenseService,LicenseService>(); 
             // Register Core services
             services.AddCoreServices();
 
