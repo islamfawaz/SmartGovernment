@@ -17,7 +17,7 @@ namespace E_Government.APIs.Extensions
             try
             {
                 await storeContextInitializer.InitializerAsync();
-              //  await storeContextInitializer.SeedAsync();
+                await storeContextInitializer.SeedAsync();
 
 
             }

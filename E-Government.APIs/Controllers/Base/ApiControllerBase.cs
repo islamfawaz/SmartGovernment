@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace E_Government.UI.Controllers.Base
+namespace E_Government.APIs.Controllers.Base
 {
     [ApiController]
     [Route("api/[controller]")]

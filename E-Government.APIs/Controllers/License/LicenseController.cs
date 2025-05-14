@@ -1,7 +1,7 @@
-﻿using E_Government.Core.Domain.Entities;
+﻿using E_Government.APIs.Controllers.Base;
+using E_Government.Core.Domain.Entities;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
-using E_Government.UI.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Government.APIs.Controllers.License

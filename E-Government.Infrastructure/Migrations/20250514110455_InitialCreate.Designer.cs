@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Government.Infrastructure.Migrations
 {
     [DbContext(typeof(UnifiedDbContext))]
-    [Migration("20250510090734_EditLengthandbill")]
-    partial class EditLengthandbill
+    [Migration("20250514110455_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

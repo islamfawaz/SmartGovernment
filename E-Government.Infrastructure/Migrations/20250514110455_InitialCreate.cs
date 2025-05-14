@@ -297,7 +297,7 @@ namespace E_Government.Infrastructure.Migrations
                     Status = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ExtraFields = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ExtraFields = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: "{}")
                 },
                 constraints: table =>
                 {
@@ -385,12 +385,12 @@ namespace E_Government.Infrastructure.Migrations
                     IssueDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", maxLength: 20, nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    PreviousReading = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CurrentReading = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PreviousReading = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    CurrentReading = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     MeterId = table.Column<int>(type: "int", nullable: false),
                     UseNID = table.Column<string>(type: "nchar(50)", nullable: false),
                     PdfUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),

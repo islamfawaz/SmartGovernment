@@ -10,7 +10,7 @@ namespace E_Government.Core.Domain.RepositoryContracts.Persistence
         public interface IDbInitializer
         {
             Task InitializerAsync();
-           // Task SeedAsync();
+           Task SeedAsync();
         }
   
 }

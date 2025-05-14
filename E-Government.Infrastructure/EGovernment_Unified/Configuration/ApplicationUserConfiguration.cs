@@ -14,7 +14,6 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
         {
             public void Configure(EntityTypeBuilder<ApplicationUser> builder)
             {
-                // نستخدم جدول AspNetUsers الافتراضي مع تعديلاتنا
                 builder.ToTable("AspNetUsers");
 
 

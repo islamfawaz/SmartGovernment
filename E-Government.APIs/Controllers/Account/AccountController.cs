@@ -1,8 +1,8 @@
-﻿using E_Government.Core.Domain.Entities;
+﻿using E_Government.APIs.Controllers.Base;
+using E_Government.Core.Domain.Entities;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
-using E_Government.UI.Controllers.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -101,22 +101,40 @@ namespace E_Government.APIs.Controllers.Account
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login([FromBody] loginDTO loginDTO)
         {
+            _logger.LogInformation("Login attempt for email: {Email}", loginDTO.Email);
             var user = await _userManager.FindByEmailAsync(loginDTO.Email);
-            if (user == null) return Unauthorized();
-
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
-            if (!result.Succeeded) return Unauthorized();
-
-
-            user.EmailConfirmed = true;
-
-
-            return Ok(new UserDTO
+            if (user == null)
             {
-                Email = user.Email,
-                Token = await _token.GenerateToken(user, _userManager)
-            });
+                _logger.LogWarning("User not found: {Email}", loginDTO.Email);
+                return Unauthorized("Invalid credentials."); // Provide a generic message
+            }
+
+            _logger.LogInformation("User found: {Email}. Checking password.", loginDTO.Email);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning("Password check failed for user: {Email}", loginDTO.Email);
+                return Unauthorized("Invalid credentials.");
+            }
+
+            // user.EmailConfirmed = true; // This line might not be necessary here unless specifically intended for login flow.
+
+            _logger.LogInformation("Password check succeeded for user: {Email}. Generating token.", loginDTO.Email);
+            try
+            {
+                var tokenString = await _token.GenerateToken(user, _userManager);
+                _logger.LogInformation("Token generated successfully for user: {Email}", loginDTO.Email);
+                return Ok(new UserDTO
+                {
+                    Email = user.Email,
+                    Token = tokenString
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating token for user: {Email}", loginDTO.Email);
+                return StatusCode(500, "An internal error occurred while processing your request.");
+            }
         }
     }
 }

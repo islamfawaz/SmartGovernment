@@ -30,10 +30,6 @@
 		<ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="EGovernment_Unified\Migration\" />
-	</ItemGroup>
-
 
 	<!-- Removed Custom Build Target as it's no longer needed with project references -->
 	<!-- <Target Name="CopyInfrastructureDllAfterBuild" AfterTargets="Build"> ... </Target> -->

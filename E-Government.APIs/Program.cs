@@ -1,8 +1,12 @@
+using E_Government.APIs.Extensions;
 using E_Government.Application.Services;
 using E_Government.Application.Services.License;
+using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
+using E_Government.Core.Helper.Hub;
 using E_Government.Core.ServiceContracts;
 using E_Government.Infrastructure;
+using E_Government.Infrastructure.Common;
 using E_Government.Infrastructure.Services;
 using Stripe.V2;
 
@@ -24,9 +28,11 @@ namespace E_Government.APIs
                 options.AddPolicy("AllowAll",
                     policy =>
                     {
-                        policy.SetIsOriginAllowed(origin => true) // This is more flexible than AllowAnyOrigin
+
+                        policy.WithOrigins("http://127.0.0.1:5500")  // Allow your frontend's origin
                               .AllowAnyHeader()
-                              .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .AllowCredentials();
                     });
             });
 
@@ -35,12 +41,15 @@ namespace E_Government.APIs
 
             // Configure settings
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+            services.AddScoped<IDbInitializer, DbInitializer>();
 
             services.AddScoped<IBillingService, BillingServices>();
             services.AddScoped<ICivilDocumentsService, CivilDocumentsService>();
             services.AddScoped<ILicenseService,LicenseService>(); 
             // Register Core services
             services.AddCoreServices();
+            services.AddSignalR();
+
 
             // Add these lines in the service configuration section
             services.AddEndpointsApiExplorer();
@@ -50,6 +59,8 @@ namespace E_Government.APIs
             services.AddInfrastructureServices(configuration);
 
             var app = builder.Build();
+            await app.InitializeDbAsync();
+
 
             // Configure middleware
             app.UseHttpsRedirection();
@@ -57,6 +68,8 @@ namespace E_Government.APIs
             app.UseRouting();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapHub<DashboardHub>("/dashboardHub");
+
             app.UseSwagger();
             app.UseSwaggerUI();
 

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using E_Government.Core.DTO;
 using E_Government.Application.Services;
-using E_Government.UI.Controllers.Base;
 using E_Government.Core.ServiceContracts;
+using E_Government.APIs.Controllers.Base;
 
 namespace E_Government.APIs.Controllers.Civil
 {
