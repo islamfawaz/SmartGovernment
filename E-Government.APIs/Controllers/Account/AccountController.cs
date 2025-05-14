@@ -118,7 +118,7 @@ namespace E_Government.APIs.Controllers.Account
             }
 
             // user.EmailConfirmed = true; // This line might not be necessary here unless specifically intended for login flow.
-
+             user.LastLoginDate = DateTime.UtcNow;
             _logger.LogInformation("Password check succeeded for user: {Email}. Generating token.", loginDTO.Email);
             try
             {

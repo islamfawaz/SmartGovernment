@@ -8,7 +8,7 @@ namespace E_Government.Core.DTO
 {
     public class RequestSummaryDto
     {
-        public string RequestId { get; set; }
+        public Guid RequestId { get; set; }
         public string ApplicantName { get; set; }
         public string ApplicantNID { get; set; } // Added based on review (common in user entities)
         public string RequestType { get; set; } // e.g., "Driving License Application", "Birth Certificate Request"

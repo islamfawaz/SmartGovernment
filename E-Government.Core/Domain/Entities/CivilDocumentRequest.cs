@@ -24,7 +24,7 @@ namespace E_Government.Core.Domain.Entities
         {
             get => string.IsNullOrEmpty(ExtraFieldsJson)
                 ? new Dictionary<string, string>()
-                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(ExtraFieldsJson);
+                : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(ExtraFieldsJson)!;
             set => ExtraFieldsJson = System.Text.Json.JsonSerializer.Serialize(value);
         }
 

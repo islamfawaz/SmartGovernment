@@ -32,5 +32,9 @@ namespace E_Government.Infrastructure
             return (IGenericRepository<TEntity, TKey>)_repositories.GetOrAdd(typeof(TEntity).Name, new GenericRepository<TEntity, TKey>(_dbContext));
 
         }
+
+
+
+
     }
 }

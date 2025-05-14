@@ -1,7 +1,9 @@
 ﻿using E_Government.Core.Domain.Entities;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
+using E_Government.Core.DTO;
 using E_Government.Infrastructure.EGovernment_Unified;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace E_Government.Infrastructure.Generic_Repository
 {
@@ -35,6 +37,20 @@ namespace E_Government.Infrastructure.Generic_Repository
             await _dbContext.AddAsync(entity);
         }
 
+        public async Task<TEntity?>GetRequest(Guid id)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id);
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await _dbContext.Set<TEntity>().CountAsync();
+        }
+        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _dbContext.Set<TEntity>().CountAsync(predicate);
+        }
+
 
         public void Delete(TEntity entity)
         {
@@ -62,5 +78,61 @@ namespace E_Government.Infrastructure.Generic_Repository
                 query = include(query);
             return await query.ToListAsync();
         }
+
+        public async Task<Dictionary<string, int>> GetStatusCountsAsync(Expression<Func<TEntity, bool>> baseFilter = null)
+        {
+            var query = _dbContext.Set<TEntity>().AsQueryable();
+            if (baseFilter != null)
+            {
+                query = query.Where(baseFilter);
+            }
+
+            return new Dictionary<string, int>
+            {
+                ["Total"] = await query.CountAsync(),
+                ["Pending"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Pending"),
+                ["Approved"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Approved"),
+                ["Rejected"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Rejected")
+            };
+        }
+
+
+
+        public async Task<PagedResult<TEntity>> GetPagedListAsync(int pageNumber,int pageSize,Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> include = null)
+        {
+            IQueryable<TEntity> query = _dbContext.Set<TEntity>();
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new PagedResult<TEntity>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
     }
 }

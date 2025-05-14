@@ -11,6 +11,8 @@ namespace E_Government.Core.Domain.Entities
         public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
         //public CustomerStatus Status { get; set; } = CustomerStatus.Active;
 
+        public DateTime? LastLoginDate { get; set; }
+
         // Navigation properties
         public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public virtual ICollection<Meter> Meters { get; set; } = new List<Meter>();
