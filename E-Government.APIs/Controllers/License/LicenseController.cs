@@ -1,5 +1,6 @@
 ﻿using E_Government.APIs.Controllers.Base;
 using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;

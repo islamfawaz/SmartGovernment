@@ -1,4 +1,5 @@
 ﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.DTO;
 using Microsoft.AspNetCore.Http;
 

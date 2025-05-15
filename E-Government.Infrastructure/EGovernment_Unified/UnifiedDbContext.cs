@@ -1,4 +1,5 @@
 ﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.Liscenses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

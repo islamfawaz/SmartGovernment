@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 namespace E_Government.Infrastructure.Generic_Repository
 {
     public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey>
-        where TEntity : class
+           where TEntity : class
     {
         private readonly UnifiedDbContext _dbContext;
 
@@ -29,7 +29,7 @@ namespace E_Government.Infrastructure.Generic_Repository
         }
         public async Task<ApplicationUser> GetUserByNID(string NID)
         {
-            return await _dbContext.Set<ApplicationUser>().Where(C=>C.NID == NID).FirstOrDefaultAsync();
+            return await _dbContext.Set<ApplicationUser>().Where(C => C.NID == NID).FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(TEntity entity)
@@ -37,7 +37,7 @@ namespace E_Government.Infrastructure.Generic_Repository
             await _dbContext.AddAsync(entity);
         }
 
-        public async Task<TEntity?>GetRequest(Guid id)
+        public async Task<TEntity?> GetRequest(Guid id)
         {
             return await _dbContext.Set<TEntity>().FindAsync(id);
         }
@@ -87,18 +87,20 @@ namespace E_Government.Infrastructure.Generic_Repository
                 query = query.Where(baseFilter);
             }
 
+            // Modified to include "new" as a pending status, case-insensitively.
             return new Dictionary<string, int>
             {
                 ["Total"] = await query.CountAsync(),
-                ["Pending"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Pending"),
-                ["Approved"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Approved"),
-                ["Rejected"] = await query.CountAsync(r => EF.Property<string>(r, "Status") == "Rejected")
+                ["Pending"] = await query.CountAsync(r => EF.Property<string>(r, "Status") != null &&
+                                                        (EF.Property<string>(r, "Status").ToLower() == "pending" || EF.Property<string>(r, "Status").ToLower() == "new")),
+                ["Approved"] = await query.CountAsync(r => EF.Property<string>(r, "Status") != null && EF.Property<string>(r, "Status").ToLower() == "approved"),
+                ["Rejected"] = await query.CountAsync(r => EF.Property<string>(r, "Status") != null && EF.Property<string>(r, "Status").ToLower() == "rejected")
             };
         }
 
 
 
-        public async Task<PagedResult<TEntity>> GetPagedListAsync(int pageNumber,int pageSize,Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> include = null)
+        public async Task<PagedResult<TEntity>> GetPagedListAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> include = null)
         {
             IQueryable<TEntity> query = _dbContext.Set<TEntity>();
 

@@ -1,7 +1,9 @@
-﻿using E_Government.Core.DTO;
+﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,5 +19,8 @@ namespace E_Government.Core.ServiceContracts
         Task<bool> RejectLicenseRequestAsync(Guid id, UpdateRequestStatusInputDto input);
         Task<bool> ApproveCivilDocumentRequestAsync(Guid id, UpdateRequestStatusInputDto input);
         Task<bool> RejectCivilDocumentRequestAsync(Guid id, UpdateRequestStatusInputDto input);
+
+        Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
+
     }
 }

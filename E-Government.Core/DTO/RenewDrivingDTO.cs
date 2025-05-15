@@ -29,7 +29,7 @@ namespace E_Government.Core.DTO
         public string PaymentMethod { get; set; }
         [Required]
         //Renewal Date
-        public string RenewalDate { get; set; }
+        public DateTime RenewalDate { get; set; }
         [Required]
         //New Expiry Date
 

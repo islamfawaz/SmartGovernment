@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace E_Government.APIs.Controllers.Admin
 {
-   // [Authorize(Roles = "Admin")] // Assuming Admin role for authorization
+    // [Authorize(Roles = "Admin")] // Assuming Admin role for authorization
     [Route("api/admin")]
     [ApiController]
     public class AdminController : ControllerBase // Or Controller if you need Views, but for API, ControllerBase is fine
@@ -95,7 +95,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
         }
 
-        [HttpGet("requests/civil/{id:guid}")]
+        [HttpGet("requests/civil/{id}")]
         [ProducesResponseType(typeof(CivilDocumentRequestDetailsDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

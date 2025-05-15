@@ -5,12 +5,11 @@ namespace E_Government.Core.Domain.Entities
 {
     public class ApplicationUser :IdentityUser
     {
-         public string NID { get; set; }        //public string State { get; set; }
+         public string NID { get; set; }      
         public string  Address { get; set; }
-     //   public string AccountNumber { get; set; } // New property from JSON
-        public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
-        //public CustomerStatus Status { get; set; } = CustomerStatus.Active;
+         public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
 
+        public string DisplayName { get; set; }
         public DateTime? LastLoginDate { get; set; }
 
         // Navigation properties

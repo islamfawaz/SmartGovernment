@@ -19,13 +19,16 @@ namespace E_Government.APIs.Controllers.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AccountController> _logger;
+        private readonly IAdminService _adminService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             ITokenService token,
             SignInManager<ApplicationUser> signInManager,
             IUnitOfWork unitOfWork,
-            ILogger<AccountController> logger
+            ILogger<AccountController> logger,
+            IAdminService adminService
+
             
             )
         {
@@ -34,6 +37,7 @@ namespace E_Government.APIs.Controllers.Account
             _signInManager = signInManager;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _adminService = adminService;
         }
 
         [HttpGet("NID")]
@@ -135,6 +139,17 @@ namespace E_Government.APIs.Controllers.Account
                 _logger.LogError(ex, "Error generating token for user: {Email}", loginDTO.Email);
                 return StatusCode(500, "An internal error occurred while processing your request.");
             }
+
+           
+
+        }
+
+        [HttpGet]
+        [Route("GetUser")]
+        public async Task<ActionResult<UserDTO>> GetCurrentUser()
+        {
+            var result = await _adminService.GetCurrentUser(User);
+            return Ok(result);
         }
     }
 }
