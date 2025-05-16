@@ -32,6 +32,8 @@ namespace E_Government.Infrastructure.Migrations
                     NID = table.Column<string>(type: "nchar(50)", fixedLength: true, maxLength: 50, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Category = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Id = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -51,26 +53,6 @@ namespace E_Government.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.NID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DrivingLicenseRenewals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CurrentLicenseNumber = table.Column<int>(type: "int", nullable: false),
-                    NID = table.Column<int>(type: "int", nullable: false),
-                    CurrentExpiryDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    MedicalCheckRequired = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NewPhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RenewalDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NewExpirayDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DrivingLicenseRenewals", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -97,25 +79,6 @@ namespace E_Government.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LicenseReplacementRequests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LicenseType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    OriginalLicenseNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    PoliceReport = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DamagedLicensePhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReplacementFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LicenseReplacementRequests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TrafficViolationPayments",
                 columns: table => new
                 {
@@ -132,47 +95,6 @@ namespace E_Government.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TrafficViolationPayments", x => x.ViolationNumber);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VehicleLicenseRenewals",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PlateNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    VehicleRegistrationNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TechnicalInspectionReport = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InsuranceDocument = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PendingFines = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    RenewalDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VehicleLicenseRenewals", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VehicleOwners",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NationalId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    OwnerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    VehicleType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ManufactureYear = table.Column<int>(type: "int", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    ChassisNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    InspectionReport = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InsuranceDocument = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OwnershipProof = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VehicleOwners", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -311,6 +233,90 @@ namespace E_Government.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DrivingLicenseRenewals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicantNID = table.Column<string>(type: "nchar(50)", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NID = table.Column<int>(type: "int", nullable: false),
+                    NewExpirayDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CurrentLicenseNumber = table.Column<int>(type: "int", nullable: false),
+                    CurrentExpiryDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    MedicalCheckRequired = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NewPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NewExpiryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    RenewalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DrivingLicenseRenewals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DrivingLicenseRenewals_AspNetUsers_ApplicantNID",
+                        column: x => x.ApplicantNID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "NID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LicenseReplacementRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicantNID = table.Column<string>(type: "nchar(50)", nullable: false),
+                    LicenseType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    OriginalLicenseNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PoliceReport = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DamagedLicensePhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReplacementFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LicenseReplacementRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LicenseReplacementRequests_AspNetUsers_ApplicantNID",
+                        column: x => x.ApplicantNID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "NID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LicenseRequests",
+                columns: table => new
+                {
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicantNID = table.Column<string>(type: "nchar(50)", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LicenseRequests", x => x.PublicId);
+                    table.ForeignKey(
+                        name: "FK_LicenseRequests_AspNetUsers_ApplicantNID",
+                        column: x => x.ApplicantNID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "NID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Meters",
                 columns: table => new
                 {
@@ -331,6 +337,64 @@ namespace E_Government.Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "NID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleLicenseRenewals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PublicId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicantNID = table.Column<string>(type: "nchar(50)", nullable: false),
+                    PlateNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    VehicleRegistrationNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TechnicalInspectionReport = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    InsuranceDocument = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PendingFines = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RenewalDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleLicenseRenewals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VehicleLicenseRenewals_AspNetUsers_ApplicantNID",
+                        column: x => x.ApplicantNID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "NID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleOwners",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicantNID = table.Column<string>(type: "nchar(50)", nullable: false),
+                    VehicleType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ManufactureYear = table.Column<int>(type: "int", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    ChassisNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    InspectionReport = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    InsuranceDocument = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnershipProof = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleOwners", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VehicleOwners_AspNetUsers_ApplicantNID",
+                        column: x => x.ApplicantNID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "NID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -552,6 +616,21 @@ namespace E_Government.Infrastructure.Migrations
                 column: "ApplicantNID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DrivingLicenseRenewals_ApplicantNID",
+                table: "DrivingLicenseRenewals",
+                column: "ApplicantNID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LicenseReplacementRequests_ApplicantNID",
+                table: "LicenseReplacementRequests",
+                column: "ApplicantNID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LicenseRequests_ApplicantNID",
+                table: "LicenseRequests",
+                column: "ApplicantNID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MeterReadings_MeterId",
                 table: "MeterReadings",
                 column: "MeterId");
@@ -589,6 +668,16 @@ namespace E_Government.Infrastructure.Migrations
                 name: "IX_Payments_UserNID",
                 table: "Payments",
                 column: "UserNID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleLicenseRenewals_ApplicantNID",
+                table: "VehicleLicenseRenewals",
+                column: "ApplicantNID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleOwners_ApplicantNID",
+                table: "VehicleOwners",
+                column: "ApplicantNID");
         }
 
         /// <inheritdoc />
@@ -623,6 +712,9 @@ namespace E_Government.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "LicenseReplacementRequests");
+
+            migrationBuilder.DropTable(
+                name: "LicenseRequests");
 
             migrationBuilder.DropTable(
                 name: "MeterReadings");

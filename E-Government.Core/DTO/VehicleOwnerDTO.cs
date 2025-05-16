@@ -9,11 +9,9 @@ namespace E_Government.Core.DTO
 {
     public class VehicleOwnerDTO
     {
-        [Required]
         public string NationalId { get; set; }
-        [Required]
-        public string OwnerName { get; set; }
-        [Required]
+
+        public UserDTO User { get; set; }
         public string VehicleType { get; set; }
         [Required]
         public string Model { get; set; }

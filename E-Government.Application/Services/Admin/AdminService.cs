@@ -1,4 +1,5 @@
 ﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.CivilDocs;
 using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
@@ -30,6 +31,7 @@ namespace E_Government.Application.Services.Admin
         private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITokenService _token;
+        private readonly ILicenseRepositoryFactory _licenseRepositoryFactory;
 
         public AdminService(
             IUnitOfWork unitOfWork,
@@ -37,7 +39,9 @@ namespace E_Government.Application.Services.Admin
             ILogger<AdminService> logger,
             IHubContext<DashboardHub, IHubService> dashboardHubContext,
             UserManager<ApplicationUser> userManager,
-            ITokenService token
+            ITokenService token,
+            ILicenseRepositoryFactory licenseRepositoryFactory
+
             )
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -46,6 +50,7 @@ namespace E_Government.Application.Services.Admin
             _dashboardHubContext = dashboardHubContext ?? throw new ArgumentNullException(nameof(dashboardHubContext));
             _userManager = userManager;
             _token = token;
+            _licenseRepositoryFactory = licenseRepositoryFactory;
         }
 
         public async Task<DashboardStatisticsDto> GetDashboardStatisticsAsync()
@@ -165,9 +170,12 @@ namespace E_Government.Application.Services.Admin
                 {
                     try
                     {
-                        var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(entityType, typeof(int));
-                        dynamic repository = repoMethod.Invoke(_unitOfWork, null);
-                        IEnumerable<dynamic> licenses = await repository.GetAllAsync();
+                        var repo =_licenseRepositoryFactory.GetRepository(licenseTypeName);
+                        var licenses =await repo.GetAllAsync();
+
+                      //  var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(entityType, typeof(int));
+                       // dynamic repository = repoMethod.Invoke(_unitOfWork, null);
+                       // IEnumerable<dynamic> licenses = await repository.GetAllAsync();
 
                         foreach (var lic in licenses)
                         {
@@ -179,7 +187,7 @@ namespace E_Government.Application.Services.Admin
 
                             if (!string.IsNullOrEmpty(searchTerm))
                             {
-                                bool nameMatch = lic.ApplicantName != null && ((string)lic.ApplicantName).Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
+                                bool nameMatch = lic.Applicant.DisplayName != null && ((string)lic.Applicant.DisplayName).Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
                                 bool nidMatch = lic.ApplicantNID != null && ((string)lic.ApplicantNID).ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
                                 if (!nameMatch && !nidMatch) matches = false;
                             }
@@ -190,16 +198,16 @@ namespace E_Government.Application.Services.Admin
                                 {
                                     RequestId = lic.PublicId,
                                     RequestType = licenseTypeName,
-                                    ApplicantName = lic.ApplicantName,
-                                    ApplicantNID = lic.ApplicantNID.ToString(),
+                                    ApplicantName = lic.Applicant.DisplayName!,
+                                    ApplicantNID = lic.ApplicantNID!.ToString(),
                                     RequestDate = lic.RequestDate,
-                                    Status = lic.Status,
+                                    Status = lic.Status!,
                                     DetailsApiEndpoint = $"/api/admin/requests/license/{lic.PublicId}"
                                 });
                             }
                         }
                     }
-                    catch (Exception ex)
+                     catch (Exception ex)
                     {
                         _logger.LogError(ex, $"Error fetching or processing {licenseTypeName} requests. Ensure entities have PublicId, ApplicantName, ApplicantNID, RequestDate, Status properties.");
                     }
@@ -239,7 +247,7 @@ namespace E_Government.Application.Services.Admin
             request.Status = newStatus;
             request.LastUpdated = DateTime.UtcNow;
 
-            var civilHistory = new E_Government.Core.Domain.Entities.CivilDocumentRequestHistory
+            var civilHistory = new CivilDocumentRequestHistory
             {
                 Id = Guid.NewGuid(),
                 RequestId = requestId,
@@ -247,7 +255,7 @@ namespace E_Government.Application.Services.Admin
                 Note = notes ?? string.Empty,
                 ChangedAt = DateTime.UtcNow
             };
-            await _unitOfWork.GetRepository<E_Government.Core.Domain.Entities.CivilDocumentRequestHistory, Guid>().AddAsync(civilHistory);
+            await _unitOfWork.GetRepository<CivilDocumentRequestHistory, Guid>().AddAsync(civilHistory);
 
             await _unitOfWork.CompleteAsync();
             _logger.LogInformation($"AdminService: CivilDocumentRequest ID {requestId} status updated from {oldStatus} to {newStatus}.");

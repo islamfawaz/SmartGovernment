@@ -189,7 +189,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("Bills", (string)null);
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentAttachment", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +218,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentAttachments");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentRequest", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,7 +288,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentRequests");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentRequestHistory", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -380,11 +380,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("ApplicantNID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nchar(50)");
 
                     b.Property<DateOnly>("CurrentExpiryDate")
                         .HasColumnType("date");
@@ -434,6 +430,8 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicantNID");
+
                     b.ToTable("DrivingLicenseRenewals");
                 });
 
@@ -447,11 +445,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("ApplicantNID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nchar(50)");
 
                     b.Property<string>("DamagedLicensePhoto")
                         .HasColumnType("nvarchar(max)");
@@ -500,7 +494,33 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicantNID");
+
                     b.ToTable("LicenseReplacementRequests");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseRequest", b =>
+                {
+                    b.Property<Guid>("PublicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicantNID")
+                        .IsRequired()
+                        .HasColumnType("nchar(50)");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PublicId");
+
+                    b.HasIndex("ApplicantNID");
+
+                    b.ToTable("LicenseRequests");
                 });
 
             modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
@@ -513,11 +533,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("ApplicantNID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicantName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nchar(50)");
 
                     b.Property<string>("InsuranceDocument")
                         .HasColumnType("nvarchar(max)");
@@ -563,6 +579,8 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicantNID");
 
                     b.ToTable("VehicleLicenseRenewals");
                 });
@@ -725,6 +743,10 @@ namespace E_Government.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicantNID")
+                        .IsRequired()
+                        .HasColumnType("nchar(50)");
+
                     b.Property<string>("ChassisNumber")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -751,16 +773,6 @@ namespace E_Government.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("NationalId")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("OwnerName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("OwnershipProof")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -771,6 +783,8 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicantNID");
 
                     b.ToTable("VehicleOwners");
                 });
@@ -927,9 +941,9 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentAttachment", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocumentRequest", "Request")
+                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
                         .WithMany("Attachments")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -938,7 +952,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentRequest", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
                 {
                     b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
                         .WithMany("Requests")
@@ -947,15 +961,59 @@ namespace E_Government.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentRequestHistory", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocumentRequest", "Request")
+                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
                         .WithMany("History")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
+                {
+                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("DrivingLicenseRenewals")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
+                {
+                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("LicenseReplacementRequests")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseRequest", b =>
+                {
+                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany()
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
+                {
+                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("VehicleLicenseRenewals")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
                 });
 
             modelBuilder.Entity("E_Government.Core.Domain.Entities.Meter", b =>
@@ -996,6 +1054,17 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("Bill");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.VehicleOwner", b =>
+                {
+                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("VehicleOwners")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1053,11 +1122,19 @@ namespace E_Government.Infrastructure.Migrations
                 {
                     b.Navigation("Bills");
 
+                    b.Navigation("DrivingLicenseRenewals");
+
+                    b.Navigation("LicenseReplacementRequests");
+
                     b.Navigation("Meters");
 
                     b.Navigation("Payments");
 
                     b.Navigation("Requests");
+
+                    b.Navigation("VehicleLicenseRenewals");
+
+                    b.Navigation("VehicleOwners");
                 });
 
             modelBuilder.Entity("E_Government.Core.Domain.Entities.Bill", b =>
@@ -1066,7 +1143,7 @@ namespace E_Government.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocumentRequest", b =>
+            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
                 {
                     b.Navigation("Attachments");
 

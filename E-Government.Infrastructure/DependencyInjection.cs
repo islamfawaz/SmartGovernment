@@ -55,10 +55,8 @@ namespace E_Government.Infrastructure
             Console.WriteLine("ASP.NET Core Identity services registered.");
 
             // --- Register UnitOfWork and Generic Repository ---
-            Console.WriteLine("Registering UnitOfWork and GenericRepository...");
-            services.AddScoped<IUnitOfWork, E_Government.Infrastructure.Persistence.Repository.UnitOfWork>();
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
 
-            Console.WriteLine("UnitOfWork and GenericRepository registered.");
 
             // --- Register Specific Infrastructure Services ---
             Console.WriteLine("Registering specific infrastructure services (e.g., BillNumberGenerator)...");

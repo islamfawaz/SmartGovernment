@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using E_Government.Core.ServiceContracts;
 
 namespace E_Government.Core.Domain.Entities.Liscenses
 {
-    public class LicenseReplacementRequest
+    public class LicenseReplacementRequest :ILicenseRequest
     {
         [Key]
         public int Id { get; set; } // Internal DB ID
@@ -17,9 +18,9 @@ namespace E_Government.Core.Domain.Entities.Liscenses
 
         [Required]
         public string ApplicantNID { get; set; }
+        [ForeignKey("ApplicantNID")]
+        public ApplicationUser Applicant { get; set; }
 
-        [Required]
-        public string ApplicantName { get; set; }
 
         [Required]
         [MaxLength(20)]

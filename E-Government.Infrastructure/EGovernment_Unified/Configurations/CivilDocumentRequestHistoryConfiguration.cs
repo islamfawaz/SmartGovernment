@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.CivilDocs;
 
 namespace E_Government.Infrastructure.EGovernment_Unified.Configurations
 {

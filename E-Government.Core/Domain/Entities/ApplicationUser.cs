@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using E_Government.Core.Domain.Entities.CivilDocs;
+using E_Government.Core.Domain.Entities.Liscenses;
+using E_Government.Core.DTO;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace E_Government.Core.Domain.Entities
@@ -18,6 +21,14 @@ namespace E_Government.Core.Domain.Entities
         public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 
         public virtual ICollection<CivilDocumentRequest> Requests { get; set; } = new List<CivilDocumentRequest>();
+
+        public virtual ICollection<DrivingLicenseRenewal> DrivingLicenseRenewals { get; set; } = new List<DrivingLicenseRenewal>();
+
+        public virtual ICollection<LicenseReplacementRequest> LicenseReplacementRequests { get; set; } = new List<LicenseReplacementRequest>();
+
+        public virtual ICollection<VehicleLicenseRenewal> VehicleLicenseRenewals { get; set; } = new List<VehicleLicenseRenewal>();
+
+        public virtual ICollection<VehicleOwner> VehicleOwners { get; set; } = new List<VehicleOwner>();
 
 
 

@@ -65,7 +65,7 @@ namespace E_Government.APIs.Controllers.Account
                 NID = registerDTO.NID,
                 PhoneNumber = registerDTO.PhoneNumber,
                 Address = registerDTO.Address,
-               
+               DisplayName=registerDTO.DisplayName
 
             };
 

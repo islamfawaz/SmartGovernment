@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace E_Government.Core.Domain.Entities
+namespace E_Government.Core.Domain.Entities.CivilDocs
 {
     public class CivilDocumentRequest
     {

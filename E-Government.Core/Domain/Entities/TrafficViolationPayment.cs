@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using E_Government.Core.ServiceContracts;
 
 namespace E_Government.Core.Domain.Entities
 {
-    public class TrafficViolationPayment
+    public class TrafficViolationPayment 
     {
         [Key]
         public int ViolationNumber { get; set; }

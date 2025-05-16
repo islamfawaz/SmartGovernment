@@ -102,8 +102,8 @@ namespace E_Government.Application.Services.License
         {
             var owner = new VehicleOwner
             {
-                NationalId = dto.NationalId,
-                OwnerName = dto.OwnerName,
+                ApplicantNID = dto.NationalId,
+               // Applicant = dto.User,
                 VehicleType = dto.VehicleType,
                 Model = dto.Model,
                 ManufactureYear = dto.ManufactureYear,

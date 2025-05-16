@@ -16,9 +16,9 @@ namespace E_Government.Core.Domain.Entities
         // Corrected to use typeof() with actual entity types from E_Government.Core.Domain.Entities
         public static readonly Dictionary<string, Type> TypeNameMap = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
         {
-            { DrivingLicenseRenewal, typeof(E_Government.Core.Domain.Entities.Liscenses.DrivingLicenseRenewal) },
-            { LicenseReplacementRequest, typeof(E_Government.Core.Domain.Entities.Liscenses.LicenseReplacementRequest) },
-            { VehicleLicenseRenewal, typeof(E_Government.Core.Domain.Entities.Liscenses.VehicleLicenseRenewal) }
+            { DrivingLicenseRenewal, typeof(DrivingLicenseRenewal) },
+            { LicenseReplacementRequest, typeof(LicenseReplacementRequest) },
+            { VehicleLicenseRenewal, typeof(VehicleLicenseRenewal) }
             // Add other license entity types here if they are created and managed by AdminService
         };
     }

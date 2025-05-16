@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,13 @@ namespace E_Government.Core.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(20)]
-        public string NationalId { get; set; }
+        public string ApplicantNID { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string OwnerName { get; set; }
+        [ForeignKey("ApplicantNID")]
+        public ApplicationUser Applicant { get; set; }
 
+
+       
         // Vehicle Details
         [Required]
         [MaxLength(20)]

@@ -1,6 +1,6 @@
 using System;
 
-namespace E_Government.Core.Domain.Entities
+namespace E_Government.Core.Domain.Entities.CivilDocs
 {
     public class CivilDocumentRequestHistory
     {

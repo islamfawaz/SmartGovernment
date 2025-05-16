@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.CivilDocs;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;

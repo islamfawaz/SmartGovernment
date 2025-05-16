@@ -1,5 +1,7 @@
 ﻿using E_Government.Core.Domain.Entities;
+using E_Government.Core.Domain.Entities.CivilDocs;
 using E_Government.Core.Domain.Entities.Liscenses;
+using E_Government.Core.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +19,16 @@ namespace E_Government.Infrastructure.EGovernment_Unified
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Meter> Meters { get; set; }
         public DbSet<Bill> Bills { get; set; }
-        public DbSet<DrivingLicense> DrivingLicenses { get; set; }
+     //   public DbSet<DrivingLicense> DrivingLicenses { get; set; }
         public DbSet<DrivingLicenseRenewal> DrivingLicenseRenewals { get; set; }
         public DbSet<VehicleLicenseRenewal> VehicleLicenseRenewals { get; set; }
 
+        public DbSet<LicenseRequest> LicenseRequests { get; set; }
         public DbSet<TrafficViolationPayment> TrafficViolationPayments { get; set; }
+
+        public DbSet<DrivingLicense> DrivingLicenses { get; set; }
         public DbSet<LicenseReplacementRequest> LicenseReplacementRequests { get; set; }
+
 
         public DbSet<VehicleOwner> VehicleOwners { get; set; }
 

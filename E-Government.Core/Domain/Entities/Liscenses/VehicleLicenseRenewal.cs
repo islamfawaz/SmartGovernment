@@ -5,21 +5,26 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using E_Government.Core.ServiceContracts;
 
 namespace E_Government.Core.Domain.Entities.Liscenses
 {
-    public class VehicleLicenseRenewal
+    public class VehicleLicenseRenewal : ILicenseRequest
     {
         [Key]
         public int Id { get; set; } // Internal DB ID
+
 
         public Guid PublicId { get; set; } = Guid.NewGuid(); // Public facing ID
 
         [Required]
         public string ApplicantNID { get; set; }
 
-        [Required]
-        public string ApplicantName { get; set; }
+
+        [ForeignKey("ApplicantNID")]
+        public ApplicationUser Applicant { get; set; }
+
+
 
         [Required]
         [MaxLength(20)]

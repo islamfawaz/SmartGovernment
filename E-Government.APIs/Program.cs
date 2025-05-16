@@ -4,7 +4,7 @@ using E_Government.APIs.Extensions;
 using E_Government.Application.Services;
 using E_Government.Application.Services.Admin; // لـ IAdminService و AdminServiceCorrected (أو اسم خدمتك المحدثة)
 using E_Government.Application.Services.License;
-
+using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 
 // using E_Government.Application.Services.License; // إذا كنت تسجل خدمات أخرى
@@ -14,6 +14,8 @@ using E_Government.Core.Helper.Hub;
 using E_Government.Core.ServiceContracts;
 using E_Government.Infrastructure;
 using E_Government.Infrastructure.Common;
+using E_Government.Infrastructure.Generic_Repository;
+
 // using E_Government.Infrastructure.Services; // قد لا تحتاج هذا مباشرة هنا
 using MapsterMapper;
 // using Stripe.V2; // تأكد من أن هذا هو Stripe الصحيح، عادة ما يكون Stripe.net
@@ -78,14 +80,25 @@ namespace E_Government.APIs
                         return Task.CompletedTask;
                     };
                 });
-            // نهاية مثال تكوين المصادقة
-
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IMapper, Mapper>(); // تأكد من أن هذا هو التنفيذ الصحيح لـ Mapster
             services.AddScoped<IBillingService, BillingServices>();
             services.AddScoped<ICivilDocumentsService, CivilDocumentsService>();
             services.AddScoped<ILicenseService, LicenseService>();
+            services.AddScoped<DrivingLicenseRenewalRepository>();
+            services.AddScoped<LicenseReplacementRequestRepository>();
+            services.AddScoped<VehicleLicenseRenewalRepository>();
+
+            services.AddScoped<IGenericRepository<DrivingLicenseRenewal, int>, GenericRepository<DrivingLicenseRenewal, int>>();
+            services.AddScoped<IGenericRepository<LicenseReplacementRequest, int>, GenericRepository<LicenseReplacementRequest, int>>();
+            services.AddScoped < IGenericRepository <VehicleRenwal, int>, GenericRepository<VehicleRenwal, int>>();
+
+            // Factory
+            services.AddScoped<ILicenseRepositoryFactory, LicenseRepositoryFactory>();
+
+            // Optional: generic repo for other entities
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
             // ***** تعديل مهم: تسجيل خدمة المسؤولين الصحيحة *****
             // استبدل AdminService بالاسم الصحيح للخدمة التي تحتوي على تكامل SignalR

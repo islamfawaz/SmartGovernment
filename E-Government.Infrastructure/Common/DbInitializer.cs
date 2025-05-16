@@ -51,6 +51,7 @@ namespace E_Government.Infrastructure.Common
                 {
 
                     UserName = adminUserName,
+                    DisplayName="Islam Fawaz",
                     Email = adminEmail,
                     PhoneNumber = "0112334455",
                     EmailConfirmed = true,
