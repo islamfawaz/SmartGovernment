@@ -4,6 +4,7 @@ using E_Government.APIs.Extensions;
 using E_Government.Application.Services;
 using E_Government.Application.Services.Admin; // لـ IAdminService و AdminServiceCorrected (أو اسم خدمتك المحدثة)
 using E_Government.Application.Services.License;
+using E_Government.Application.Services.Prediction;
 using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 
@@ -20,7 +21,8 @@ using E_Government.Infrastructure.Generic_Repository;
 using MapsterMapper;
 // using Stripe.V2; // تأكد من أن هذا هو Stripe الصحيح، عادة ما يكون Stripe.net
 using Microsoft.AspNetCore.Authentication.Cookies; // مثال لمصادقة الكوكيز
-using Microsoft.AspNetCore.Http; // لـ StatusCodes
+using Microsoft.AspNetCore.Http;
+using Microsoft.ML; // لـ StatusCodes
 
 namespace E_Government.APIs
 {
@@ -89,10 +91,13 @@ namespace E_Government.APIs
             services.AddScoped<DrivingLicenseRenewalRepository>();
             services.AddScoped<LicenseReplacementRequestRepository>();
             services.AddScoped<VehicleLicenseRenewalRepository>();
+            services.AddScoped<IBillPredictionService, BillPredictionService>();
 
             services.AddScoped<IGenericRepository<DrivingLicenseRenewal, int>, GenericRepository<DrivingLicenseRenewal, int>>();
             services.AddScoped<IGenericRepository<LicenseReplacementRequest, int>, GenericRepository<LicenseReplacementRequest, int>>();
             services.AddScoped < IGenericRepository <VehicleRenwal, int>, GenericRepository<VehicleRenwal, int>>();
+            builder.Services.AddSingleton<MLContext>();
+            services.AddScoped<IPredictionService, PredictionService>();
 
             // Factory
             services.AddScoped<ILicenseRepositoryFactory, LicenseRepositoryFactory>();
