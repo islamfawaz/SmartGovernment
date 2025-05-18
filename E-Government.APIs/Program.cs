@@ -3,6 +3,7 @@
 using E_Government.APIs.Extensions;
 using E_Government.Application.Services;
 using E_Government.Application.Services.Admin; // لـ IAdminService و AdminServiceCorrected (أو اسم خدمتك المحدثة)
+using E_Government.Application.Services.Auth;
 using E_Government.Application.Services.License;
 using E_Government.Application.Services.Prediction;
 using E_Government.Core.Domain.Entities.Liscenses;
@@ -20,8 +21,6 @@ using E_Government.Infrastructure.Generic_Repository;
 // using E_Government.Infrastructure.Services; // قد لا تحتاج هذا مباشرة هنا
 using MapsterMapper;
 // using Stripe.V2; // تأكد من أن هذا هو Stripe الصحيح، عادة ما يكون Stripe.net
-using Microsoft.AspNetCore.Authentication.Cookies; // مثال لمصادقة الكوكيز
-using Microsoft.AspNetCore.Http;
 using Microsoft.ML; // لـ StatusCodes
 
 namespace E_Government.APIs
@@ -49,40 +48,10 @@ namespace E_Government.APIs
 
             services.AddControllers();
 
-            // مثال: تكوين المصادقة (افترض أنك تستخدم مصادقة الكوكيز)
-            // إذا كنت تستخدم JWT أو نظام آخر، ستحتاج إلى تعديل هذا الجزء
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) // أو JwtBearerDefaults.AuthenticationScheme
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.HttpOnly = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // مثال
-                    options.SlidingExpiration = true;
-                    options.Events.OnRedirectToLogin = context =>
-                    {
-                        if (context.Request.Path.StartsWithSegments("/api"))
-                        {
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        }
-                        else
-                        {
-                            context.Response.Redirect(context.RedirectUri);
-                        }
-                        return Task.CompletedTask;
-                    };
-                    options.Events.OnRedirectToAccessDenied = context =>
-                    {
-                        if (context.Request.Path.StartsWithSegments("/api"))
-                        {
-                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        }
-                        else
-                        {
-                            context.Response.Redirect(context.RedirectUri);
-                        }
-                        return Task.CompletedTask;
-                    };
-                });
+
+
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+            services.AddIdentityService(configuration);
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IMapper, Mapper>(); // تأكد من أن هذا هو التنفيذ الصحيح لـ Mapster
             services.AddScoped<IBillingService, BillingServices>();
@@ -109,7 +78,7 @@ namespace E_Government.APIs
             // استبدل AdminService بالاسم الصحيح للخدمة التي تحتوي على تكامل SignalR
             // على سبيل المثال: AdminServiceCorrected أو AdminServiceWithSignalR
             services.AddScoped<IAdminService, AdminService>(); // <<<< غير هذا السطر
-
+            services.AddScoped<IAuthService, AuthService>();
             // services.AddCoreServices(); // تأكد من أن هذه الدالة لا تقوم بتسجيل IAdminService مرة أخرى بشكل خاطئ
             services.AddSignalR();
 
@@ -125,9 +94,26 @@ namespace E_Government.APIs
             app.UseCors("AllowAll");
             app.UseRouting();
 
-            // ***** تعديل مهم: إضافة UseAuthentication *****
-            app.UseAuthentication(); // <<<< أضف هذا السطر هنا
+            app.UseHttpsRedirection();
+            app.UseCors("AllowAll");
+            app.UseRouting();
+            app.UseAuthentication(); // لازم يكون قبل UseAuthorization
             app.UseAuthorization();
+            app.MapControllers();
+
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine($"IsAuthenticated: {context.User?.Identity?.IsAuthenticated}");
+                if (context.User?.Identity?.IsAuthenticated == true)
+                {
+                    Console.WriteLine($"Claims: {string.Join(", ", context.User.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
+                }
+                else
+                {
+                    Console.WriteLine($"Authentication Failed: {context.Response.StatusCode} - {context.Response.Headers["WWW-Authenticate"]}");
+                }
+                await next();
+            });
 
             app.MapControllers();
             app.MapHub<DashboardHub>("/dashboardHub");

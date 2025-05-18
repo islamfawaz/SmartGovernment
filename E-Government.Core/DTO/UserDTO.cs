@@ -8,6 +8,9 @@ namespace E_Government.Core.DTO
 {
     public class UserDTO
     {
+        public int Id { get; set; }
+        public string NID { get; set; }
+        public string DisplayName { get; set; }
         public string? Email { get; set; }
         public string? Token { get; set; }
     }

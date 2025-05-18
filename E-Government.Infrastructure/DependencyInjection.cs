@@ -4,8 +4,6 @@ using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.ServiceContracts; // Added for IBillNumberGenerator
 using E_Government.Core.ServiceContracts.Common;
 using E_Government.Infrastructure.EGovernment_Unified;
-using E_Government.Infrastructure.Generic_Repository; // Correct namespace for GenericRepository
-using E_Government.Infrastructure.Persistence.Repository; // Correct namespace for UnitOfWork
 using E_Government.Infrastructure.Services; // Added for BillNumberGenerator implementation
 using Microsoft.AspNetCore.Identity; // Added for Identity services
 using Microsoft.EntityFrameworkCore;
@@ -41,18 +39,7 @@ namespace E_Government.Infrastructure
 
             // --- Register ASP.NET Core Identity ---
             Console.WriteLine("Registering ASP.NET Core Identity services...");
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-                options.SignIn.RequireConfirmedAccount = false;
-            })
-            .AddEntityFrameworkStores<UnifiedDbContext>()
-            .AddDefaultTokenProviders();
-            Console.WriteLine("ASP.NET Core Identity services registered.");
+           
 
             // --- Register UnitOfWork and Generic Repository ---
             services.AddScoped<IUnitOfWork,UnitOfWork>();
@@ -62,8 +49,7 @@ namespace E_Government.Infrastructure
             Console.WriteLine("Registering specific infrastructure services (e.g., BillNumberGenerator)...");
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IBillNumberGenerator, BillNumberGenerator>(); // Added registration
-            services.AddScoped<ITokenService, TokenService>(); // Added registration
-
+   
             // TODO: Add registration for IPaymentService implementation here if not covered by marker interfaces
             Console.WriteLine("Specific infrastructure services registered.");
 

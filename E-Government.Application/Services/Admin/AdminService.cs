@@ -1,6 +1,5 @@
 ﻿using E_Government.Core.Domain.Entities;
 using E_Government.Core.Domain.Entities.CivilDocs;
-using E_Government.Core.Domain.Entities.Liscenses;
 using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
 using E_Government.Core.Exceptions;
@@ -11,13 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_Government.Application.Services.Admin
 {
@@ -30,7 +23,6 @@ namespace E_Government.Application.Services.Admin
         private readonly ILogger<AdminService> _logger;
         private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ITokenService _token;
         private readonly ILicenseRepositoryFactory _licenseRepositoryFactory;
 
         public AdminService(
@@ -39,7 +31,6 @@ namespace E_Government.Application.Services.Admin
             ILogger<AdminService> logger,
             IHubContext<DashboardHub, IHubService> dashboardHubContext,
             UserManager<ApplicationUser> userManager,
-            ITokenService token,
             ILicenseRepositoryFactory licenseRepositoryFactory
 
             )
@@ -49,7 +40,6 @@ namespace E_Government.Application.Services.Admin
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _dashboardHubContext = dashboardHubContext ?? throw new ArgumentNullException(nameof(dashboardHubContext));
             _userManager = userManager;
-            _token = token;
             _licenseRepositoryFactory = licenseRepositoryFactory;
         }
 
@@ -365,42 +355,6 @@ namespace E_Government.Application.Services.Admin
             return await UpdateLicenseRequestStatusAsync(id, "Rejected", input.Notes);
         }
 
-        // جوه كلاس AdminService.cs
-        // افترض إن عندك _userManager و _logger معمولهم inject صح
-
-        public async Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
-        {
-            if (claimsPrincipal == null)
-            {
-                _logger.LogError("GetCurrentUser: ClaimsPrincipal is null.");
-                throw new ArgumentNullException(nameof(claimsPrincipal));
-            }
-
-            // الطريقة الآمنة لجلب قيمة الإيميل من الـ Claims
-            var emailClaim = claimsPrincipal.FindFirst(System.Security.Claims.ClaimTypes.Email);
-
-            if (emailClaim == null || string.IsNullOrEmpty(emailClaim.Value))
-            {
-                _logger.LogError("GetCurrentUser: Email claim is missing or empty in the token.");
-                // ممكن هنا ترجع null أو ترمي Exception حسب ما يناسب اللوجيك بتاعك
-                // لو هترمى Exception، ممكن تكون حاجة زي UnauthorizedAccessException أو ArgumentException
-                throw new UnauthorizedAccessException("Email claim not found in token. Cannot identify user.");
-            }
-
-            var email = emailClaim.Value;
-            _logger.LogInformation($"GetCurrentUser: Attempting to find user by email: {email}");
-
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-            {
-                _logger.LogWarning($"GetCurrentUser: User not found with email: {email}");
-                throw new NotFoundException($"User with email {email} not found.");
-            }
-
-            _logger.LogInformation($"GetCurrentUser: User {email} found successfully.");
-            return user;
-        }
 
     }
 

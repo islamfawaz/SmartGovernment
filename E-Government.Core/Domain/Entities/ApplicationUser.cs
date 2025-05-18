@@ -30,9 +30,6 @@ namespace E_Government.Core.Domain.Entities
 
         public virtual ICollection<VehicleOwner> VehicleOwners { get; set; } = new List<VehicleOwner>();
 
-
-
-
     }
 
 }

@@ -20,7 +20,6 @@ namespace E_Government.Core.ServiceContracts
         Task<bool> ApproveCivilDocumentRequestAsync(Guid id, UpdateRequestStatusInputDto input);
         Task<bool> RejectCivilDocumentRequestAsync(Guid id, UpdateRequestStatusInputDto input);
 
-        Task<ApplicationUser> GetCurrentUser(ClaimsPrincipal claimsPrincipal);
 
     }
 }

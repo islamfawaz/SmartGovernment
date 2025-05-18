@@ -1,12 +1,9 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
 using E_Government.Core.DTO;
 using E_Government.Core.ServiceContracts;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace E_Government.APIs.Controllers.Account
 {
@@ -14,142 +11,47 @@ namespace E_Government.APIs.Controllers.Account
     [Route("api/[controller]")]
     public class AccountController : ApiControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ITokenService _token;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<AccountController> _logger;
-        private readonly IAdminService _adminService;
+        private readonly IAuthService _authService;
 
-        public AccountController(
-            UserManager<ApplicationUser> userManager,
-            ITokenService token,
-            SignInManager<ApplicationUser> signInManager,
-            IUnitOfWork unitOfWork,
-            ILogger<AccountController> logger,
-            IAdminService adminService
-
-            
-            )
+        public AccountController(IAuthService authService)
         {
-            _userManager = userManager;
-            _token = token;
-            _signInManager = signInManager;
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-            _adminService = adminService;
+            _authService = authService;
         }
 
-        [HttpGet("NID")]
-        public ActionResult CheckNID(string NID)
+
+        [HttpPost("login")]//POST/api/account/login
+        public async Task<ActionResult<UserDTO>> Login(loginDTO model)
         {
-            var user = _unitOfWork.GetRepository<ApplicationUser, string>().GetUserByNID(NID);
-            return user == null ? NotFound() : Ok();
+            var response = await _authService.LoginAsync(model);
+            return Ok(response);
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register([FromBody] RegisterDTO registerDTO)
+
+        [HttpPost("register")]//POST/api/account/register
+        public async Task<ActionResult<UserDTO>> Register(RegisterDTO model)
         {
-            // التحقق من وجود البريد الإلكتروني مسبقاً
-            var existingUser = await _userManager.FindByEmailAsync(registerDTO.Email);
-            if (existingUser != null)
-            {
-                return Conflict("البريد الإلكتروني مسجل مسبقاً");
-            }
-
-            // إنشاء كائن المستخدم
-            var appUser = new ApplicationUser
-            {
-                UserName = registerDTO.Email, // أو إنشاء اسم مستخدم فريد
-                Email = registerDTO.Email,
-                NID = registerDTO.NID,
-                PhoneNumber = registerDTO.PhoneNumber,
-                Address = registerDTO.Address,
-               DisplayName=registerDTO.DisplayName
-
-            };
-
-            try
-            {
-                // إنشاء المستخدم
-                var result = await _userManager.CreateAsync(appUser, registerDTO.Password);
-
-                if (!result.Succeeded)
-                {
-                    return BadRequest(result.Errors);
-                }
-
-                // توليد التوكن
-                var token = await _token.GenerateToken(appUser, _userManager);
-
-                return Ok(new UserDTO
-                {
-                    Email = appUser.Email,
-                    Token = token
-                });
-            }
-            catch (DbUpdateException ex)
-            {
-                // تسجيل الخطأ للتحليل
-                _logger.LogError(ex, "Error saving user to database");
-
-                // التحقق من أسباب أخرى للخطأ
-                if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 2601)
-                {
-                    return Conflict("البريد الإلكتروني أو الرقم القومي مسجل مسبقاً");
-                }
-
-                return StatusCode(500, "حدث خطأ أثناء تسجيل المستخدم");
-            }
-        }
-        [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login([FromBody] loginDTO loginDTO)
-        {
-            _logger.LogInformation("Login attempt for email: {Email}", loginDTO.Email);
-            var user = await _userManager.FindByEmailAsync(loginDTO.Email);
-            if (user == null)
-            {
-                _logger.LogWarning("User not found: {Email}", loginDTO.Email);
-                return Unauthorized("Invalid credentials."); // Provide a generic message
-            }
-
-            _logger.LogInformation("User found: {Email}. Checking password.", loginDTO.Email);
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
-            if (!result.Succeeded)
-            {
-                _logger.LogWarning("Password check failed for user: {Email}", loginDTO.Email);
-                return Unauthorized("Invalid credentials.");
-            }
-
-            // user.EmailConfirmed = true; // This line might not be necessary here unless specifically intended for login flow.
-             user.LastLoginDate = DateTime.UtcNow;
-            _logger.LogInformation("Password check succeeded for user: {Email}. Generating token.", loginDTO.Email);
-            try
-            {
-                var tokenString = await _token.GenerateToken(user, _userManager);
-                _logger.LogInformation("Token generated successfully for user: {Email}", loginDTO.Email);
-                return Ok(new UserDTO
-                {
-                    Email = user.Email,
-                    Token = tokenString
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error generating token for user: {Email}", loginDTO.Email);
-                return StatusCode(500, "An internal error occurred while processing your request.");
-            }
-
-           
-
+            var response = await _authService.RegisterAsync(model);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("GetUser")]
+        [Authorize]
         public async Task<ActionResult<UserDTO>> GetCurrentUser()
         {
-            var result = await _adminService.GetCurrentUser(User);
+            var result = await _authService.GetCurrentUser(User);
             return Ok(result);
         }
+       
+
+        [HttpGet("emailExist")]
+        [Authorize]
+        public async Task<ActionResult<bool>> CheckEmailExist()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            return Ok(await _authService.EmailExist(email!));
+        }
+
+
+
     }
 }
