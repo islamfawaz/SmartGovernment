@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using E_Government.Core.Domain.Entities;
+using E_Government.Domain.Entities.Bills;
 
 namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
 {

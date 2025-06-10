@@ -40,7 +40,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\E-Government.Application\E-Government.Application.csproj" />
-		<ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
 		<ProjectReference Include="..\E-Government.Infrastructure\E-Government.Infrastructure.csproj" />
 	</ItemGroup>
 

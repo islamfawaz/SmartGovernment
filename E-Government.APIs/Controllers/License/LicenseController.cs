@@ -1,19 +1,19 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.Entities.Liscenses;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+using E_Government.Application.DTO.License;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.Entities.Liscenses;
+using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Government.APIs.Controllers.License
 {
     public class LicenseController : ApiControllerBase
     {
-        private readonly ILicenseService _licenseService;
+        private readonly IServiceManager _serviceManager;
 
-        public LicenseController(ILicenseService licenseService)
+        public LicenseController(IServiceManager serviceManager)
         {
-            _licenseService = licenseService;
+           _serviceManager = serviceManager;
         }
 
         [HttpPost("create-license")]
@@ -24,7 +24,7 @@ namespace E_Government.APIs.Controllers.License
                 return BadRequest(ModelState);
             }
 
-            var result = await _licenseService.CreateLicenseAsync(licenseDTO);
+            var result = await _serviceManager.LicenseService.CreateLicenseAsync(licenseDTO);
             return Ok(result);
         }
 
@@ -36,7 +36,7 @@ namespace E_Government.APIs.Controllers.License
                 return BadRequest(ModelState);
             }
 
-            var result = await _licenseService.RenewLicenseAsync(renewDrivingDTO);
+            var result = await _serviceManager.LicenseService.RenewLicenseAsync(renewDrivingDTO);
             return Ok(result);
         }
 
@@ -46,28 +46,28 @@ namespace E_Government.APIs.Controllers.License
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
 
-            var result = await _licenseService.CreateVehicleLicenseRenewalAsync(dto);
+            var result = await  _serviceManager.LicenseService.CreateVehicleLicenseRenewalAsync(dto);
             return Ok(result);
         }
 
         [HttpPost("traffic-violation")]
         public async Task<ActionResult<TrafficViolationPayment>> CreateViolationAsync(TrafficViolationDTO dto)
         {
-            var result = await _licenseService.CreateTrafficViolationAsync(dto);
+            var result = await _serviceManager.LicenseService.CreateTrafficViolationAsync(dto);
             return Ok(result);
         }
 
         [HttpPost("vehicle-license")]
         public async Task<ActionResult<VehicleOwner>> CreateOwnerAsync(VehicleOwnerDTO dto)
         {
-            var result = await _licenseService.CreateVehicleOwnerAsync(dto);
+            var result = await _serviceManager.LicenseService.CreateVehicleOwnerAsync(dto);
             return Ok(result);
         }
 
         [HttpPost("replacement-license")]
         public async Task<ActionResult<LicenseReplacementRequest>> CreateReplacementAsync(LicenseReplacementDto dto)
         {
-            var result = await _licenseService.CreateLicenseReplacementAsync(dto);
+            var result = await _serviceManager.LicenseService.CreateLicenseReplacementAsync(dto);
             return Ok(result);
         }
     }

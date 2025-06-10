@@ -1,12 +1,11 @@
 ﻿// Assuming these are the correct namespaces from the user's project
-using E_Government.Core.Domain.Entities;
-using E_Government.Core.DTO;
-using E_Government.Core.Helper.Hub;
-using E_Government.Core.ServiceContracts;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using E_Government.Application.DTO.AdminDashboard;
+using E_Government.Application.DTO.CivilDocs;
+using E_Government.Application.DTO.License;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.Entities;
+using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace E_Government.APIs.Controllers.Admin
 {
@@ -15,18 +14,18 @@ namespace E_Government.APIs.Controllers.Admin
     [ApiController]
     public class AdminController : ControllerBase // Or Controller if you need Views, but for API, ControllerBase is fine
     {
-        private readonly IAdminService _adminService;
         private readonly ILogger<AdminController> _logger;
+        private readonly IServiceManager _serviceManager;
+
         // private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext; // Example if Hub is used directly
 
-        public AdminController(
-            IAdminService adminService,
-            ILogger<AdminController> logger
+        public AdminController(IAdminService adminService,ILogger<AdminController> logger,IServiceManager serviceManager
+
             // IHubContext<DashboardHub, IHubService> dashboardHubContext // Example
             )
         {
-            _adminService = adminService ?? throw new ArgumentNullException(nameof(adminService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _serviceManager = serviceManager;
             // _dashboardHubContext = dashboardHubContext; // Example
         }
 
@@ -38,7 +37,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation("AdminController: Attempting to fetch dashboard statistics.");
             try
             {
-                var statistics = await _adminService.GetDashboardStatisticsAsync();
+                var statistics = await _serviceManager.AdminService.GetDashboardStatisticsAsync();
                 return Ok(statistics);
             }
             catch (Exception ex)
@@ -61,7 +60,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch requests. Page: {pageNumber}, Size: {pageSize}, Status: {status}, Type: {type}, Search: {searchTerm}");
             try
             {
-                var requests = await _adminService.GetAllRequestsAsync(pageNumber, pageSize, status, type, searchTerm);
+                var requests = await _serviceManager.AdminService.GetAllRequestsAsync(pageNumber, pageSize, status, type, searchTerm);
                 return Ok(requests);
             }
             catch (Exception ex)
@@ -80,7 +79,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch license request details for ID: {id}");
             try
             {
-                var details = await _adminService.GetLicenseRequestDetailsAsync(id);
+                var details = await _serviceManager.AdminService.GetLicenseRequestDetailsAsync(id);
                 if (details == null)
                 {
                     _logger.LogWarning($"AdminController: License request with ID {id} not found.");
@@ -104,7 +103,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch civil document request details for ID: {id}");
             try
             {
-                var details = await _adminService.GetCivilDocumentRequestDetailsAsync(id);
+                var details = await _serviceManager.AdminService.GetCivilDocumentRequestDetailsAsync(id);
                 if (details == null)
                 {
                     _logger.LogWarning($"AdminController: Civil document request with ID {id} not found.");
@@ -133,7 +132,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _adminService.ApproveLicenseRequestAsync(id, input);
+                var success = await _serviceManager.AdminService.ApproveLicenseRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to approve license request ID {id} or request not found.");
@@ -166,7 +165,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _adminService.RejectLicenseRequestAsync(id, input);
+                var success = await _serviceManager.AdminService.RejectLicenseRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to reject license request ID {id} or request not found.");
@@ -197,7 +196,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _adminService.ApproveCivilDocumentRequestAsync(id, input);
+                var success = await _serviceManager.AdminService.ApproveCivilDocumentRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to approve civil document request ID {id} or request not found.");
@@ -229,7 +228,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _adminService.RejectCivilDocumentRequestAsync(id, input);
+                var success = await _serviceManager.AdminService.RejectCivilDocumentRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to reject civil document request ID {id} or request not found.");

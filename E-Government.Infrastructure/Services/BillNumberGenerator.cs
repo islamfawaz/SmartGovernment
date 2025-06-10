@@ -1,6 +1,6 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
+using E_Government.Domain.Entities.Bills;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using Microsoft.Extensions.Logging;
 
 namespace E_Government.Infrastructure.Services

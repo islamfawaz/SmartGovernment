@@ -1,17 +1,18 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+using E_Government.Application.DTO.Bills;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Government.APIs.Controllers.Bills
 {
     public class BillsController:ApiControllerBase
     {
-        private readonly IBillingService _billingService;
+        private readonly IServiceManager _serviceManager;
 
-        public BillsController(IBillingService billingService)
+        public BillsController(IServiceManager serviceManager)
         {
-            _billingService = billingService;
+            _serviceManager = serviceManager;
         }
 
 
@@ -26,7 +27,7 @@ namespace E_Government.APIs.Controllers.Bills
             }
 
             // Call service and get the result
-            var result = await _billingService.RegisterMeter(request);
+            var result = await _serviceManager.BillingService.RegisterMeter(request);
 
             // Handle the result
             if (!result.Success)
@@ -68,7 +69,7 @@ namespace E_Government.APIs.Controllers.Bills
             }
 
            
-                var result = await _billingService.GenerateAndPayBill(request);
+                var result = await _serviceManager.BillingService.GenerateAndPayBill(request);
 
                 if (!result.Success)
                 {

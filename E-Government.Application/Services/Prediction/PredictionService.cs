@@ -1,5 +1,6 @@
-﻿using E_Government.Core.Domain.Entities.DataModels;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Application.ServiceContracts;
+using E_Government.Domain.Entities.DataModels;
+using E_Government.Domain.ServiceContracts;
 using Microsoft.ML;
 using System;
 using System.Collections.Generic;

@@ -1,14 +1,15 @@
 ﻿// E-Government.Application/Services/BillingService.cs
-using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence; // For IUnitOfWork
 // using E_Government.Core.Domain.Specification.MeterReadings; // Removed, MeterReadingSpecs is in Bills namespace
 // using E_Government.Core.Domain.Specification.Users; // Removed, CustomerWithMetersSpec is in Bills namespace
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts; // For IBillingService, IBillNumberGenerator
+using E_Government.Application.DTO.Bills;
+using E_Government.Application.ServiceContracts;
+using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
+using E_Government.Domain.Entities;
+using E_Government.Domain.Entities.Bills;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using IPaymentService = E_Government.Core.ServiceContracts.IPaymentService;
 
 namespace E_Government.Application.Services
 {
@@ -16,7 +17,7 @@ namespace E_Government.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBillNumberGenerator _billNumberGenerator;
-        private readonly Core.ServiceContracts.IPaymentService _paymentService;
+        private readonly IPaymentService _paymentService;
         private readonly ILogger<BillingServices> _logger;
 
         public BillingServices(

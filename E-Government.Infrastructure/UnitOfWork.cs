@@ -1,4 +1,4 @@
-﻿using E_Government.Core.Domain.RepositoryContracts.Persistence;
+﻿using E_Government.Domain.RepositoryContracts.Persistence;
 using E_Government.Infrastructure.EGovernment_Unified;
 using E_Government.Infrastructure.Generic_Repository;
 using System.Collections.Concurrent;

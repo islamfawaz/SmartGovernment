@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace E_Government.Infrastructure.Migrations
+namespace Charting.Infrastructure.Migrations
 {
     [DbContext(typeof(UnifiedDbContext))]
     partial class UnifiedDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace E_Government.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("NID")
                         .HasMaxLength(50)
@@ -47,7 +47,6 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -112,7 +111,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Bill", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.Bill", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -189,7 +188,74 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("Bills", (string)null);
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.Meter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("InstallationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MeterNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("UserNID")
+                        .IsRequired()
+                        .HasColumnType("nchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeterNumber")
+                        .IsUnique();
+
+                    b.HasIndex("UserNID");
+
+                    b.ToTable("Meters", (string)null);
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.MeterReading", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsEstimated")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MeterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReadingDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeterId");
+
+                    b.HasIndex("ReadingDate");
+
+                    b.ToTable("MeterReadings", (string)null);
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +284,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentAttachments");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,7 +354,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentRequests");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -317,7 +383,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentRequestHistories");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.DrivingLicense", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicense", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -370,7 +436,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("DrivingLicenses");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -435,7 +501,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("DrivingLicenseRenewals");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -499,7 +565,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("LicenseReplacementRequests");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseRequest", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequest", b =>
                 {
                     b.Property<Guid>("PublicId")
                         .ValueGeneratedOnAdd()
@@ -523,7 +589,50 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("LicenseRequests");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.TrafficViolationPayment", b =>
+                {
+                    b.Property<int>("ViolationNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ViolationNumber"));
+
+                    b.Property<decimal>("FineAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("PaymentReceipt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("PlateNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("ViolationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ViolationType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ViolationNumber");
+
+                    b.ToTable("TrafficViolationPayments");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -585,157 +694,7 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("VehicleLicenseRenewals");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Meter", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("InstallationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MeterNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("UserNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MeterNumber")
-                        .IsUnique();
-
-                    b.HasIndex("UserNID");
-
-                    b.ToTable("Meters", (string)null);
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.MeterReading", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsEstimated")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MeterId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReadingDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MeterId");
-
-                    b.HasIndex("ReadingDate");
-
-                    b.ToTable("MeterReadings", (string)null);
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("BillId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TransactionId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BillId")
-                        .IsUnique()
-                        .HasFilter("[BillId] IS NOT NULL");
-
-                    b.HasIndex("TransactionId")
-                        .IsUnique();
-
-                    b.HasIndex("UserNID");
-
-                    b.ToTable("Payments", (string)null);
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.TrafficViolationPayment", b =>
-                {
-                    b.Property<int>("ViolationNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ViolationNumber"));
-
-                    b.Property<decimal>("FineAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PaymentReceipt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("PlateNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("ViolationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ViolationType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ViolationNumber");
-
-                    b.ToTable("TrafficViolationPayments");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.VehicleOwner", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleOwner", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -922,15 +881,15 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Bill", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.Bill", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.Meter", "Meter")
+                    b.HasOne("E_Government.Domain.Entities.Bills.Meter", "Meter")
                         .WithMany("Bills")
                         .HasForeignKey("MeterId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "User")
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "User")
                         .WithMany("Bills")
                         .HasForeignKey("UseNID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -941,84 +900,9 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.Meter", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
-                        .WithMany("Attachments")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Request");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
-                        .WithMany("Requests")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
-                        .WithMany("History")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Request");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("DrivingLicenseRenewals")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("LicenseReplacementRequests")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.LicenseRequest", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany()
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("VehicleLicenseRenewals")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Meter", b =>
-                {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "User")
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "User")
                         .WithMany("Meters")
                         .HasForeignKey("UserNID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1027,9 +911,9 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.MeterReading", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.MeterReading", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.Meter", "Meter")
+                    b.HasOne("E_Government.Domain.Entities.Bills.Meter", "Meter")
                         .WithMany("Readings")
                         .HasForeignKey("MeterId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1038,27 +922,84 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("Meter");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Payment", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentAttachment", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.Bill", "Bill")
-                        .WithOne("Payment")
-                        .HasForeignKey("E_Government.Core.Domain.Entities.Payment", "BillId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "User")
-                        .WithMany("Payments")
-                        .HasForeignKey("UserNID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
+                        .WithMany("Attachments")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Bill");
-
-                    b.Navigation("User");
+                    b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.VehicleOwner", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", "Applicant")
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
+                        .WithMany("Requests")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequestHistory", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequest", "Request")
+                        .WithMany("History")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("DrivingLicenseRenewals")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("LicenseReplacementRequests")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequest", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany()
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
+                        .WithMany("VehicleLicenseRenewals")
+                        .HasForeignKey("ApplicantNID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Applicant");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleOwner", b =>
+                {
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
                         .WithMany("VehicleOwners")
                         .HasForeignKey("ApplicantNID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1078,7 +1019,7 @@ namespace E_Government.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1087,7 +1028,7 @@ namespace E_Government.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1102,7 +1043,7 @@ namespace E_Government.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1111,14 +1052,14 @@ namespace E_Government.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("E_Government.Core.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Bills");
 
@@ -1128,8 +1069,6 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Navigation("Meters");
 
-                    b.Navigation("Payments");
-
                     b.Navigation("Requests");
 
                     b.Navigation("VehicleLicenseRenewals");
@@ -1137,24 +1076,18 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("VehicleOwners");
                 });
 
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Bill", b =>
-                {
-                    b.Navigation("Payment")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
-                {
-                    b.Navigation("Attachments");
-
-                    b.Navigation("History");
-                });
-
-            modelBuilder.Entity("E_Government.Core.Domain.Entities.Meter", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Bills.Meter", b =>
                 {
                     b.Navigation("Bills");
 
                     b.Navigation("Readings");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.CivilDocs.CivilDocumentRequest", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("History");
                 });
 #pragma warning restore 612, 618
         }

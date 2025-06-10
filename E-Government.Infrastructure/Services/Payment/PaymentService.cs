@@ -1,10 +1,13 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Domain.Helper;
+using E_Government.Domain.RepositoryContracts.Persistence;
+using E_Government.Domain.ServiceContracts;
+using E_Government.Domain.Entities.Bills;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
+using E_Government.Application.ServiceContracts;
+using E_Government.Application.DTO.Bills;
+using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
 
 namespace E_Government.Infrastructure.Services
 {

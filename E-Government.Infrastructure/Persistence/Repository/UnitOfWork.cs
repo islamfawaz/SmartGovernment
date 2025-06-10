@@ -1,5 +1,5 @@
 // E-Government.Infrastructure/Persistence/Repository/UnitOfWork.cs
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using E_Government.Infrastructure.EGovernment_Unified; // Assuming this is the correct namespace for UnifiedDbContext
 using E_Government.Infrastructure.Generic_Repository; // Added for GenericRepository
 using System.Collections;

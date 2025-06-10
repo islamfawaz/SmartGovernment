@@ -1,10 +1,13 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.Entities.CivilDocs;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.DTO;
-using E_Government.Core.Exceptions;
-using E_Government.Core.Helper.Hub;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Application.DTO.AdminDashboard;
+using E_Government.Application.DTO.CivilDocs;
+using E_Government.Application.DTO.License;
+using E_Government.Application.Exceptions;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.Entities;
+using E_Government.Domain.Entities.CivilDocs;
+using E_Government.Domain.Entities.Liscenses;
+using E_Government.Domain.Helper.Hub;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -305,7 +308,7 @@ namespace E_Government.Application.Services.Admin
                 CurrentStatus = entity.Status,
             };
 
-            if (entity is E_Government.Core.Domain.Entities.Liscenses.DrivingLicenseRenewal dlr)
+            if (entity is DrivingLicenseRenewal dlr)
             {
                 detailsDto.LicenseNumber = dlr.CurrentLicenseNumber.ToString();
             }
@@ -354,7 +357,6 @@ namespace E_Government.Application.Services.Admin
             if (string.IsNullOrWhiteSpace(input.Notes)) return false;
             return await UpdateLicenseRequestStatusAsync(id, "Rejected", input.Notes);
         }
-
 
     }
 

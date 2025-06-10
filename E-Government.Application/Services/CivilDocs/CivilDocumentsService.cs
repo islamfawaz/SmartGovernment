@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.Entities.CivilDocs;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+using E_Government.Application.DTO.CivilDocs;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.DTO;
+using E_Government.Domain.Entities;
+using E_Government.Domain.Entities.CivilDocs;
+using E_Government.Domain.RepositoryContracts.Persistence;
+using E_Government.Domain.ServiceContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Application.Services

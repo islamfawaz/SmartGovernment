@@ -1,12 +1,5 @@
-﻿using E_Government.Core.Domain.Entities.Liscenses;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Domain.RepositoryContracts.Persistence;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_Government.Infrastructure.Generic_Repository
 {

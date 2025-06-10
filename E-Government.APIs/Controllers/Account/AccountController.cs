@@ -1,57 +1,86 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+using E_Government.Application.DTO.Auth;
+using E_Government.Application.DTO.User;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.DTO;
+using E_Government.Domain.ServiceContracts;
+using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace E_Government.APIs.Controllers.Account
+namespace E_Government.APIs.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AccountController : ApiControllerBase
+     public class AccountController : ApiControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IServiceManager _serviceManager;
 
-        public AccountController(IAuthService authService)
+        public AccountController(IServiceManager serviceManager)
         {
-            _authService = authService;
+            _serviceManager = serviceManager;
         }
 
-
-        [HttpPost("login")]//POST/api/account/login
-        public async Task<ActionResult<UserDTO>> Login(loginDTO model)
+        [HttpPost("register")]
+        public async Task<ActionResult<ApplicationUserDto>> Register(RegisterDTO model)
         {
-            var response = await _authService.LoginAsync(model);
-            return Ok(response);
+            try
+            {
+                var result = await _serviceManager.AuthService.RegisterAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
-
-        [HttpPost("register")]//POST/api/account/register
-        public async Task<ActionResult<UserDTO>> Register(RegisterDTO model)
+        [HttpPost("login")]
+        public async Task<ActionResult<ApplicationUserDto>> Login(loginDTO model)
         {
-            var response = await _authService.RegisterAsync(model);
-            return Ok(response);
+            try
+            {
+                var result = await _serviceManager.AuthService.LoginAsync(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<UserDTO>> GetCurrentUser()
+        [HttpGet("user")]
+        [Authorize] // ✅ This endpoint requires authentication
+        public async Task<ActionResult<ApplicationUserDto>> GetCurrentUser()
         {
-            var result = await _authService.GetCurrentUser(User);
-            return Ok(result);
+            try
+            {
+                // Enhanced debugging
+                Console.WriteLine("=== REQUEST DEBUG INFO ===");
+                Console.WriteLine($"IsAuthenticated: {User.Identity!.IsAuthenticated}");
+                Console.WriteLine($"AuthenticationType: {User.Identity.AuthenticationType}");
+                Console.WriteLine($"Name: {User.Identity.Name}");
+                Console.WriteLine($"Claims Count: {User.Claims.Count()}");
+
+                Console.WriteLine("All Claims:");
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"  {claim.Type} = {claim.Value}");
+                }
+                Console.WriteLine("========================");
+
+                var result = await _serviceManager.AuthService.GetCurrentUser(User);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ GetCurrentUser Error: {ex.Message}");
+                Console.WriteLine($"❌ Stack Trace: {ex.StackTrace}");
+                return StatusCode(500, new { message = ex.Message, type = ex.GetType().Name });
+            }
         }
        
-
-        [HttpGet("emailExist")]
-        [Authorize]
-        public async Task<ActionResult<bool>> CheckEmailExist()
-        {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            return Ok(await _authService.EmailExist(email!));
-        }
-
-
-
+        
+   
     }
 }

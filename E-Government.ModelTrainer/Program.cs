@@ -1,4 +1,4 @@
-﻿using E_Government.Core.Domain.Entities.DataModels;
+﻿using E_Government.Domain.Entities.DataModels;
 using Microsoft.ML;
 using Microsoft.ML.Data;
 using Microsoft.ML.Trainers.LightGbm;

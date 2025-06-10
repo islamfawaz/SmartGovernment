@@ -1,7 +1,7 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.Entities.CivilDocs;
-using E_Government.Core.Domain.Entities.Liscenses;
-using E_Government.Core.DTO;
+﻿using E_Government.Domain.Entities;
+using E_Government.Domain.Entities.Bills;
+using E_Government.Domain.Entities.CivilDocs;
+using E_Government.Domain.Entities.Liscenses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,6 @@ namespace E_Government.Infrastructure.EGovernment_Unified
           
         }
 
-        public DbSet<Payment> Payments { get; set; }
         public DbSet<Meter> Meters { get; set; }
         public DbSet<Bill> Bills { get; set; }
      //   public DbSet<DrivingLicense> DrivingLicenses { get; set; }

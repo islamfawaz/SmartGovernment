@@ -1,8 +1,9 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.DTO;
+using E_Government.Application.DTO.Bills;
+using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
+using E_Government.Domain.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using IPaymentService = E_Government.Core.ServiceContracts.IPaymentService;
 
 namespace E_Government.UI.Controllers.BillsPayment
 {

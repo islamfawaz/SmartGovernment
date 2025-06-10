@@ -1,26 +1,24 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.DTO;
-using E_Government.Core.Exceptions;
-using E_Government.Core.ServiceContracts;
-using MapsterMapper;
+﻿using E_Government.Application.DTO.Auth;
+using E_Government.Application.DTO.User;
+using E_Government.Application.Exceptions;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.DTO;
+using E_Government.Domain.Entities;
+using E_Government.Domain.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace E_Government.Application.Services.Auth
 {
     public class AuthService(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IOptions<JwtSettings> jwtSettings,
-        IMapper mapper) : IAuthService
+         UserManager<ApplicationUser> userManager,
+         SignInManager<ApplicationUser> signInManager,
+         IOptions<JwtSettings> jwtSettings
+        ) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
@@ -29,49 +27,100 @@ namespace E_Government.Application.Services.Auth
             return await userManager.FindByEmailAsync(email!) is not null;
         }
 
-        public async Task<UserDTO> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
+        // Add this method to your AuthService class
+        private async Task<ApplicationUser> CreateUserFromTokenClaimsAsync(ClaimsPrincipal claimsPrincipal)
+        {
+            var userId = claimsPrincipal.FindFirst("uid")?.Value;
+            var email = claimsPrincipal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var displayName = claimsPrincipal.FindFirst("display_name")?.Value;
+            var nid = claimsPrincipal.FindFirst("nid")?.Value;
+
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new BadRequestException("Cannot create user: email not found in token");
+            }
+
+            Console.WriteLine($"🔧 Auto-creating user from token claims: {email}");
+
+            var user = new ApplicationUser
+            {
+
+                Id = userId, // Use the same ID from the token
+                Email = email,
+                UserName = email,
+                DisplayName = displayName ?? email,
+                NID = nid?.Trim(),
+                EmailConfirmed = true // Since they had a valid token
+            };
+
+            // Create user without password (since they're already authenticated via token)
+            var result = await userManager.CreateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                Console.WriteLine($"❌ Failed to create user: {errors}");
+                throw new BadRequestException($"Failed to recreate user: {errors}");
+            }
+
+            Console.WriteLine($"✅ Successfully created user: {user.Email}");
+            return user;
+        }
+
+        // Then modify your GetCurrentUser method to use this:
+        public async Task<ApplicationUserDto> GetCurrentUser(ClaimsPrincipal claimsPrincipal)
         {
             if (!claimsPrincipal.Identity.IsAuthenticated)
                 throw new UnAuthorizedException("User is not authenticated.");
 
-            var email = claimsPrincipal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value
-                        ?? claimsPrincipal.FindFirst(ClaimTypes.Email)?.Value
-                        ?? claimsPrincipal.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+            var userId = claimsPrincipal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value ??
+                        claimsPrincipal.FindFirst("uid")?.Value;
 
-            if (string.IsNullOrEmpty(email))
+            var email = claimsPrincipal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+
+            Console.WriteLine($"🔍 Looking for user - ID: '{userId}', Email: '{email}'");
+
+            ApplicationUser user = null;
+
+            // Try to find user by ID
+            if (!string.IsNullOrEmpty(userId))
             {
-                var userId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    var user = await userManager.FindByIdAsync(userId);
-                    if (user != null)
-                    {
-                        return new UserDTO
-                        {
-                            DisplayName = user.DisplayName,
-                            NID = user.NID,
-                            Email = user.Email!,
-                            Token = await GenerateTokenAsync(user)
-                        };
-                    }
-                }
-                throw new UnAuthorizedException("User identification not found in token.");
+                user = await userManager.FindByIdAsync(userId);
             }
 
-            var userByEmail = await userManager.FindByEmailAsync(email);
-            if (userByEmail is null)
-                throw new NotFoundException("User not found.");
-
-            return new UserDTO
+            // Try to find user by email
+            if (user == null && !string.IsNullOrEmpty(email))
             {
-                DisplayName = userByEmail.DisplayName,
-                NID = userByEmail.NID,
-                Email = userByEmail.Email!,
-                Token = await GenerateTokenAsync(userByEmail)
+                user = await userManager.FindByEmailAsync(email);
+            }
+
+            // If user still not found, auto-create from token claims
+            if (user == null)
+            {
+                Console.WriteLine("⚠️ User not found in database, attempting to recreate from token...");
+                try
+                {
+                    user = await CreateUserFromTokenClaimsAsync(claimsPrincipal);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Failed to recreate user: {ex.Message}");
+                    throw new NotFoundException($"User not found and could not be recreated: {ex.Message}");
+                }
+            }
+
+            Console.WriteLine($"✅ Returning user: {user.Email}");
+
+            return new ApplicationUserDto
+            {
+                DisplayName = user.DisplayName,
+                NID = user.NID,
+                Email = user.Email!,
+                Token = await GenerateTokenAsync(user)
             };
         }
 
-        public async Task<UserDTO> LoginAsync(loginDTO model)
+        public async Task<ApplicationUserDto> LoginAsync(loginDTO model)
         {
             var normalizedEmail = model.Email.ToLower();
             var user = await userManager.FindByEmailAsync(normalizedEmail);
@@ -83,14 +132,16 @@ namespace E_Government.Application.Services.Auth
             if (result.IsLockedOut) throw new UnAuthorizedException("Account Is Locked.");
             if (!result.Succeeded) throw new UnAuthorizedException("Invalid Login attempt");
 
-            return new UserDTO()
+            return new ApplicationUserDto()
             {
+                DisplayName = user.DisplayName,
+                NID = user.NID,
                 Email = user.Email,
                 Token = await GenerateTokenAsync(user)
             };
         }
 
-        public async Task<UserDTO> RegisterAsync(RegisterDTO model)
+        public async Task<ApplicationUserDto> RegisterAsync(RegisterDTO model)
         {
             var existingUser = await userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
@@ -101,10 +152,10 @@ namespace E_Government.Application.Services.Auth
                 DisplayName = model.DisplayName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                NID = model.NID, // ❗ Primary Key
+                NID = model.NID,
                 Address = model.Address,
                 Category = model.Category,
-                UserName = model.Email // ✅ Required by Identity
+                UserName = model.Email
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
@@ -115,46 +166,78 @@ namespace E_Government.Application.Services.Auth
                 throw new BadRequestException($"User creation failed: {errorMessages}");
             }
 
-            return new UserDTO()
+            return new ApplicationUserDto()
             {
+                DisplayName = user.DisplayName,
+                NID = user.NID,
                 Email = user.Email,
                 Token = await GenerateTokenAsync(user)
             };
         }
 
+
+
+
         private async Task<string> GenerateTokenAsync(ApplicationUser user)
         {
-            // في دالة GenerateToken في TokenService
             var claims = new List<Claim>
-{
-    new Claim(ClaimTypes.NameIdentifier, user.Id),
-    new Claim(ClaimTypes.Email, user.Email), // استخدم ClaimTypes.Email بدلاً من "email"
-    new Claim(ClaimTypes.GivenName, user.DisplayName)
-    // أي claims أخرى تحتاجها
-};
+    {
+        // ✅ FIXED: Use consistent claim types
+        new Claim(ClaimTypes.NameIdentifier, user.Id), // This maps to nameidentifier
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.Email, user.Email), // This maps to emailaddress
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.Iat,
+            new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
+            ClaimValueTypes.Integer64),
+        new Claim("uid", user.Id), // Custom claim for backup
+        new Claim("display_name", user.DisplayName ?? ""),
+        new Claim("nid", user.NID ?? "")
+    };
 
-
-            // باقي الكود كما هو
             var userClaims = await userManager.GetClaimsAsync(user);
             claims.AddRange(userClaims);
 
             var roles = await userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var authKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-            var token = new JwtSecurityToken(
-                audience: _jwtSettings.Audience,
-                issuer: _jwtSettings.Issuer,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-                claims: claims,
-                signingCredentials: new SigningCredentials(authKey, SecurityAlgorithms.HmacSha256)
-            );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience,
+                SigningCredentials = new SigningCredentials(authKey, SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            Console.WriteLine($"✅ Token created successfully");
+            Console.WriteLine($"✅ Token length: {tokenString.Length}");
+            Console.WriteLine($"✅ Expires: {tokenDescriptor.Expires}");
+
+            // ✅ DEBUG: Show what claims are in the token
+            try
+            {
+                var decodedToken = tokenHandler.ReadJwtToken(tokenString);
+                Console.WriteLine($"✅ Token validation: Header={decodedToken.Header.Count}, Claims={decodedToken.Claims.Count()}");
+                Console.WriteLine("✅ Token Claims:");
+                foreach (var claim in decodedToken.Claims)
+                {
+                    Console.WriteLine($"   {claim.Type} = {claim.Value}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Token decode error: {ex.Message}");
+            }
+
+            return tokenString;
         }
-
     }
 }

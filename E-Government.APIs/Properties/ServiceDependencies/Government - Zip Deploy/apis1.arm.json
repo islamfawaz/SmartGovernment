@@ -4,7 +4,7 @@
   "parameters": {
     "resourceGroupName": {
       "type": "string",
-      "defaultValue": "RG01",
+      "defaultValue": "E-GovernmentAPIs20250508013847ResourceGroup",
       "metadata": {
         "_parameterType": "resourceGroup",
         "description": "Name of the resource group for the resource. It is recommended to put resources under same resource group for better tracking."
@@ -49,7 +49,7 @@
           "contentVersion": "1.0.0.0",
           "resources": [
             {
-              "name": "E-GovernmentAPI",
+              "name": "E-GovernmentAPIsapi",
               "type": "Microsoft.ApiManagement/service",
               "location": "[parameters('resourceLocation')]",
               "properties": {
@@ -59,7 +59,7 @@
                 "hostnameConfigurations": [
                   {
                     "type": "Proxy",
-                    "hostName": "e-governmentapi.azure-api.net",
+                    "hostName": "e-governmentapisapi.azure-api.net",
                     "encodedCertificate": null,
                     "keyVaultId": null,
                     "certificatePassword": null,
@@ -82,6 +82,7 @@
                 },
                 "virtualNetworkType": "None",
                 "certificates": null,
+                "enableClientCertificate": false,
                 "disableGateway": false,
                 "apiVersionConstraint": {
                   "minApiVersion": null
@@ -95,13 +96,13 @@
             },
             {
               "type": "Microsoft.ApiManagement/service/apis",
-              "name": "E-GovernmentAPI/E-GovernmentAPIs",
+              "name": "E-GovernmentAPIsapi/E-GovernmentAPIs",
               "properties": {
                 "displayName": "E-Government API",
                 "apiRevision": "1",
                 "description": "Documentation for the E-Government system",
                 "subscriptionRequired": true,
-                "serviceUrl": "https://government-c8bqb5c6gwfnf2h8.canadacentral-01.azurewebsites.net",
+                "serviceUrl": "https://e-governmentapis20250508013847-a4hfhdc7avgjfmdu.canadacentral-01.azurewebsites.net",
                 "path": "",
                 "protocols": [
                   "https"
@@ -118,7 +119,7 @@
               },
               "apiVersion": "2019-12-01",
               "dependsOn": [
-                "E-GovernmentAPI"
+                "E-GovernmentAPIsapi"
               ]
             }
           ]

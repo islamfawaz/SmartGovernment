@@ -1,31 +1,37 @@
-// E-Government.Application/ApplicationServiceExtensions.cs
+﻿// E-Government.Application/ApplicationServiceExtensions.cs
+using E_Government.Application.ServiceContracts;
+using E_Government.Application.Services;
+using E_Government.Application.Services.Admin;
+using E_Government.Application.Services.Auth;
+using E_Government.Application.Services.License;
+using E_Government.Application.Services.Prediction;
+using E_Government.Domain.Helper;
+using MapsterMapper;
 using Microsoft.Extensions.Configuration; // Added for consistency, might be needed
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.ML;
 
 namespace E_Government.Application
 {
     public static class ApplicationServiceExtensions
     {
-        // This method can be used for manual registrations specific to the Application layer,
-        // although Scrutor will handle most convention-based registrations.
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
+       public static IServiceCollection AddApplicationServices(this IServiceCollection services ,IConfiguration configuration)
         {
-            Console.WriteLine("Registering Application specific services (if any)...");
+            services.AddScoped<IMapper, Mapper>();
+            services.AddScoped<IBillingService, BillingServices>();
+            services.AddScoped<ICivilDocumentsService, CivilDocumentsService>();
+            services.AddScoped<ILicenseService, LicenseService>();
+            services.AddScoped<IModelService, ModelService>();
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddSingleton<MLContext>();
+            services.AddScoped<IPredictionService, PredictionService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+            
 
-            // Add MediatR, AutoMapper, FluentValidation, etc., here if used.
-            // Example:
-            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            // services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            // services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-            // Add any other specific Application service registrations here.
-
-            Console.WriteLine("Application specific services registered.");
+            services.AddSignalR();
             return services;
         }
     }
-
-    // Placeholder class for assembly scanning
-    public class PlaceholderApplicationClass { }
 }
 

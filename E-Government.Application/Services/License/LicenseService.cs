@@ -1,8 +1,7 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.Entities.Liscenses;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.DTO;
-using E_Government.Core.ServiceContracts;
+﻿using E_Government.Application.DTO.License;
+using E_Government.Application.ServiceContracts;
+using E_Government.Domain.Entities.Liscenses;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using Talabat.Admin.DashBoard.Helpers;
 
 namespace E_Government.Application.Services.License

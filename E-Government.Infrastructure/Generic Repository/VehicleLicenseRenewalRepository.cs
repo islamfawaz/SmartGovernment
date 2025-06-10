@@ -1,11 +1,6 @@
-﻿using E_Government.Core.Domain.Entities.Liscenses;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.ServiceContracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using E_Government.Domain.Entities.Liscenses;
+using E_Government.Domain.RepositoryContracts;
+using E_Government.Domain.RepositoryContracts.Persistence;
 
 namespace E_Government.Infrastructure.Generic_Repository
 {

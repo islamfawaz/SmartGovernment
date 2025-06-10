@@ -1,6 +1,6 @@
 ﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Core.Domain.Entities.DataModels;
-using E_Government.Core.ServiceContracts;
+using E_Government.Domain.Entities.DataModels;
+using E_Government.Domain.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_Government.APIs.Controllers.Prediction

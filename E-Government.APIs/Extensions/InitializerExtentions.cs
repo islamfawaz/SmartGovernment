@@ -1,4 +1,4 @@
-﻿using E_Government.Core.Domain.RepositoryContracts.Persistence;
+﻿using E_Government.Domain.RepositoryContracts.Persistence;
 
 namespace E_Government.APIs.Extensions
 {

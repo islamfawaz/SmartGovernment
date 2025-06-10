@@ -8,12 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
+    <ProjectReference Include="..\E-Government.Core\E-Government.Domain.csproj" />
   </ItemGroup>
 
-  <!-- Add any Application layer specific packages here, e.g., MediatR, FluentValidation, AutoMapper -->
-  <!-- Example: -->
-  <!-- <PackageReference Include="MediatR" Version="12.3.0" /> -->
-  <!-- <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" /> -->
 
 </Project>

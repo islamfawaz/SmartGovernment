@@ -22,13 +22,14 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.5.1" />
-		<PackageReference Include="Microsoft.ML" Version="4.0.2" /> <!-- Check latest compatible version -->
+		<PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.12.0" />
+		<PackageReference Include="Microsoft.ML" Version="4.0.2" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.12.0" /> <!-- Check latest compatible version -->
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\E-Government.Application\E-Government.Application.csproj" />
-		<ProjectReference Include="..\E-Government.Core\E-Government.Core.csproj" />
+		<ProjectReference Include="..\E-Government.Core\E-Government.Domain.csproj" />
 	</ItemGroup>
 
 

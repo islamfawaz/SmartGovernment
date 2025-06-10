@@ -1,6 +1,6 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using E_Government.Core.DTO;
+﻿using E_Government.Domain.DTO;
+using E_Government.Domain.Entities;
+using E_Government.Domain.RepositoryContracts.Persistence;
 using E_Government.Infrastructure.EGovernment_Unified;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

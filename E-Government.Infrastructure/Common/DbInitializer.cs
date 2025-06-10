@@ -1,6 +1,4 @@
-﻿using E_Government.Core.Domain.Entities;
-using E_Government.Core.Domain.RepositoryContracts.Persistence;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using E_Government.Infrastructure.EGovernment_Unified;
 using Microsoft.AspNetCore.Identity;
+using E_Government.Domain.Entities;
+using E_Government.Domain.RepositoryContracts.Persistence;
 
 namespace E_Government.Infrastructure.Common
 {
@@ -49,7 +49,7 @@ namespace E_Government.Infrastructure.Common
             {
                 user = new ApplicationUser
                 {
-
+                    NID="12345678901234", // Example NID, should be unique
                     UserName = adminUserName,
                     DisplayName="Islam Fawaz",
                     Email = adminEmail,

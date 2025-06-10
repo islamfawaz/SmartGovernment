@@ -1,11 +1,11 @@
-﻿using E_Government.Core.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using E_Government.Domain.Entities;
 
 namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
 {
@@ -44,11 +44,7 @@ namespace E_Government.Infrastructure.EGovernment_Unified.Configuration
                 //    .HasMaxLength(20);
 
                 // Relationships
-                builder.HasMany(u => u.Payments)
-                    .WithOne(p => p.User)
-                    .HasForeignKey(p => p.UserNID)
-                    .OnDelete(DeleteBehavior.Restrict);
-
+               
                 builder.HasMany(u => u.Meters)
                     .WithOne(m => m.User)
                     .HasForeignKey(m => m.UserNID)
