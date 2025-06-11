@@ -2,6 +2,7 @@
 using E_Government.Application.DTO.Auth;
 using E_Government.Application.DTO.User;
 using E_Government.Application.ServiceContracts;
+using E_Government.Application.Services.NIDValidation;
 using E_Government.Domain.DTO;
 using E_Government.Domain.ServiceContracts;
 using E_Government.Domain.ServiceContracts.Common;
@@ -47,6 +48,16 @@ namespace E_Government.APIs.Controllers
             {
                 return Unauthorized(new { message = ex.Message });
             }
+        }
+        [HttpPost("validate-nid")]
+        public  ActionResult<NIDValidationResultDto> ValidateNID(string nid)
+        {
+            var result = _serviceManager.ValidationService.ValidateAndExtractNID(nid);
+
+            if (result.IsValid)
+                return Ok(result);
+            else
+                return BadRequest(result);
         }
 
         [HttpGet("user")]

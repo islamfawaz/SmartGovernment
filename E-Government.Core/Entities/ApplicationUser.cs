@@ -1,5 +1,6 @@
 ﻿using E_Government.Domain.Entities.Bills;
 using E_Government.Domain.Entities.CivilDocs;
+using E_Government.Domain.Entities.Enums;
 using E_Government.Domain.Entities.Liscenses;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,6 +11,13 @@ namespace E_Government.Domain.Entities
          public required string NID { get; set; }      
         public string ? Address { get; set; }
          public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
+
+        public Gender Gender { get; set; }
+
+        public DateOnly DateOfBirth { get; set; }
+
+        public int GovernorateCode { get; set; }
+        public string ? GovernorateName { get; set; } 
 
         public string ? DisplayName { get; set; }
         public DateTime? LastLoginDate { get; set; }

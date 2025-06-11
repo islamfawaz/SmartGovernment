@@ -4,6 +4,7 @@ using E_Government.Domain.Helper;
 using E_Government.Domain.Helper.Hub;
 using E_Government.Infrastructure;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 namespace E_Government.APIs
 {
@@ -27,7 +28,11 @@ namespace E_Government.APIs
                           .AllowCredentials();
                 });
             });
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+            });
             services.AddIdentityService(configuration);
             services.AddApplicationServices(configuration);
             services.AddEndpointsApiExplorer();

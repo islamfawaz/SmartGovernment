@@ -3,9 +3,12 @@ using E_Government.Application.ServiceContracts;
 using E_Government.Application.Services;
 using E_Government.Application.Services.Admin;
 using E_Government.Application.Services.Auth;
+using E_Government.Application.Services.Common;
 using E_Government.Application.Services.License;
+using E_Government.Application.Services.NIDValidation;
 using E_Government.Application.Services.Prediction;
 using E_Government.Domain.Helper;
+using E_Government.Domain.ServiceContracts.Common;
 using MapsterMapper;
 using Microsoft.Extensions.Configuration; // Added for consistency, might be needed
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +29,10 @@ namespace E_Government.Application
             services.AddSingleton<MLContext>();
             services.AddScoped<IPredictionService, PredictionService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<INIDValidationService, NIDValidationService>();
             services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+
             
 
             services.AddSignalR();

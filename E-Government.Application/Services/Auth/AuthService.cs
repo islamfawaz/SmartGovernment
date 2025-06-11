@@ -17,10 +17,12 @@ namespace E_Government.Application.Services.Auth
     public class AuthService(
          UserManager<ApplicationUser> userManager,
          SignInManager<ApplicationUser> signInManager,
-         IOptions<JwtSettings> jwtSettings
+         IOptions<JwtSettings> jwtSettings,
+         INIDValidationService validationService
         ) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
+        private readonly INIDValidationService _validationService = validationService;
 
         public async Task<bool> EmailExist(string email)
         {
@@ -134,9 +136,9 @@ namespace E_Government.Application.Services.Auth
 
             return new ApplicationUserDto()
             {
-                DisplayName = user.DisplayName,
+                DisplayName = user.DisplayName!,
                 NID = user.NID,
-                Email = user.Email,
+                Email = user.Email!,
                 Token = await GenerateTokenAsync(user)
             };
         }
@@ -155,7 +157,13 @@ namespace E_Government.Application.Services.Auth
                 NID = model.NID,
                 Address = model.Address,
                 Category = model.Category,
-                UserName = model.Email
+                UserName = model.Email,
+                Gender = _validationService.ExtractGender(model.NID),
+                DateOfBirth=_validationService.ExtractDateOfBirth(model.NID),
+                GovernorateName=_validationService.ExtractGovernorateInfo(model.NID).Name,
+                
+
+
             };
 
             var result = await userManager.CreateAsync(user, model.Password);

@@ -3,6 +3,7 @@ using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
 using E_Government.Application.Services.Admin;
 using E_Government.Application.Services.Auth;
 using E_Government.Application.Services.License;
+using E_Government.Application.Services.NIDValidation;
 using E_Government.Domain.Entities;
 using E_Government.Domain.Helper;
 using E_Government.Domain.Helper.Hub;
@@ -13,11 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace E_Government.Application.Services.Common
 {
@@ -35,11 +31,15 @@ namespace E_Government.Application.Services.Common
         private readonly IPaymentService paymentService;
         private readonly IBillNumberGenerator billNumberGenerator;
         private readonly ILogger<BillingServices> logg;
+        private readonly IGovernorateService governorate;
+        private readonly INIDValidationService validationService;
         private readonly Lazy<IAuthService> _authService;
         private readonly Lazy<ICivilDocumentsService> _civilDocsService;
         private readonly Lazy<ILicenseService> _licenseService;
         private readonly Lazy<BillingServices> _billingServices;
-        public ServiceManager(IUnitOfWork unitOfWork,IMapper mapper,ILogger<AdminService> logger, IHubContext<DashboardHub, IHubService> dashboardHubContext, UserManager<ApplicationUser> userManager, ILicenseRepositoryFactory licenseRepositoryFactory ,SignInManager<ApplicationUser> signInManager, IOptions<JwtSettings> jwtSettings ,IPaymentService paymentService ,IBillNumberGenerator billNumberGenerator, ILogger<BillingServices> logg)
+        private readonly Lazy<INIDValidationService> _validationService;
+
+        public ServiceManager(IUnitOfWork unitOfWork,IMapper mapper,ILogger<AdminService> logger, IHubContext<DashboardHub, IHubService> dashboardHubContext, UserManager<ApplicationUser> userManager, ILicenseRepositoryFactory licenseRepositoryFactory ,SignInManager<ApplicationUser> signInManager, IOptions<JwtSettings> jwtSettings ,IPaymentService paymentService ,IBillNumberGenerator billNumberGenerator, ILogger<BillingServices> logg ,IGovernorateService governorate,INIDValidationService validationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -52,11 +52,15 @@ namespace E_Government.Application.Services.Common
             this.paymentService = paymentService;
             this.billNumberGenerator = billNumberGenerator;
             this.logg = logg;
+            this.governorate = governorate;
+            this.validationService = validationService;
             _adminService = new Lazy<IAdminService>(() => new AdminService(_unitOfWork!, _mapper!, _logger!, _dashboardHubContext!, _userManager, _licenseRepositoryFactory));
-            _authService = new Lazy<IAuthService>(() => new AuthService(_userManager,_signInManager,_jwtSettings));
+            _authService = new Lazy<IAuthService>(() => new AuthService(_userManager,_signInManager,_jwtSettings, validationService));
             _civilDocsService=new Lazy<ICivilDocumentsService>(()=>new CivilDocumentsService(_unitOfWork));
             _licenseService = new Lazy<ILicenseService>(() =>new LicenseService(_unitOfWork));
             _billingServices = new Lazy<BillingServices>(() => new BillingServices(_unitOfWork, billNumberGenerator, paymentService, logg));
+            _validationService = new Lazy<INIDValidationService>(() => new NIDValidationService(governorate));
+            
 
         }
 
@@ -73,6 +77,9 @@ namespace E_Government.Application.Services.Common
 
         public ILicenseService LicenseService =>_licenseService.Value;
 
-        public IBillingService BillingService { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IBillingService BillingService => _billingServices.Value;
+
+        public INIDValidationService ValidationService => _validationService.Value;
+
     }
 }

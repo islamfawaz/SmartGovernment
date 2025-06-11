@@ -11,12 +11,9 @@ namespace E_Government.Domain.ServiceContracts.Common
     {
         public IAdminService  AdminService { get; }
         public IAuthService AuthService { get; }
-
-        public IBillingService BillingService { get; set; }
+        public IBillingService BillingService { get;  }
         public ICivilDocumentsService CivilDocsService { get; }
-
         public ILicenseService LicenseService { get; }
-
-
+        public INIDValidationService ValidationService { get;  }
     }
 }

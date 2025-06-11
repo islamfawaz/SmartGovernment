@@ -3,7 +3,7 @@ using E_Government.Domain.Entities.Bills;
 using E_Government.Domain.RepositoryContracts.Persistence;
 using Microsoft.Extensions.Logging;
 
-namespace E_Government.Infrastructure.Services
+namespace E_Government.Infrastructure.Infrastructure.Services
 {
     public class BillNumberGenerator : IBillNumberGenerator
     {

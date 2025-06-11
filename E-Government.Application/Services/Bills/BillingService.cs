@@ -6,6 +6,7 @@ using E_Government.Application.ServiceContracts;
 using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
 using E_Government.Domain.Entities;
 using E_Government.Domain.Entities.Bills;
+using E_Government.Domain.Entities.Enums;
 using E_Government.Domain.RepositoryContracts.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

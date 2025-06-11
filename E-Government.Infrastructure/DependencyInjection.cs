@@ -5,7 +5,9 @@ using E_Government.Domain.RepositoryContracts.Persistence;
 using E_Government.Infrastructure.Common;
 using E_Government.Infrastructure.EGovernment_Unified;
 using E_Government.Infrastructure.Generic_Repository;
-using E_Government.Infrastructure.Services; 
+using E_Government.Infrastructure.Infrastructure.Services;
+using E_Government.Infrastructure.Infrastructure.Services.User;
+using E_Government.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,8 @@ namespace E_Government.Infrastructure
             services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             // --- Register Specific Infrastructure Services ---
+            services.AddSingleton<IGovernorateService, GovernorateService>();
+
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IBillNumberGenerator, BillNumberGenerator>();  
             services.AddScoped<DrivingLicenseRenewalRepository>();

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace E_Government.Domain.Entities.Bills
+namespace E_Government.Domain.Entities.Enums
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum CustomerStatus
