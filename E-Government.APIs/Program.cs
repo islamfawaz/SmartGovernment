@@ -42,7 +42,9 @@ namespace E_Government.APIs
             #endregion
 
             var app = builder.Build();
+
             await app.InitializeDbAsync();
+
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowFrontend");

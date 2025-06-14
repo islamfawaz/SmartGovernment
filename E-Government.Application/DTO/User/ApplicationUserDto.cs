@@ -8,16 +8,17 @@ namespace E_Government.Application.DTO.User
 {
     public class ApplicationUserDto
     {
-        public string NID { get; set; }      
-        public string Address { get; set; }
+        public required string NID { get; set; }      
+        public string ? Address { get; set; }
 
-        public string Email { get; set; }
-        public string Token { get; set; }
+        public required string Email { get; set; }
+        public  required string Token { get; set; }
 
-        public string DisplayName { get; set; }
-        public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
+        public required string DisplayName { get; set; }
+        public string PhoneNumber { get; set; }
+        public Status Status { get; set; }
         public Gender Gender { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
         public int GovernorateCode { get; set; }
         public GovernorateDto ? GovernorateName { get; set; }
 

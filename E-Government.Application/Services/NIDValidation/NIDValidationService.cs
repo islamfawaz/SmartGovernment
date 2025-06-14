@@ -280,5 +280,14 @@ namespace E_Government.Application.Services.NIDValidation
         {
             return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
         }
+
+        public Status ExtractStatus(GovernorateDto governorate)
+        {
+            if (governorate.Name== "غير محدد")
+            {
+                return Status.Resident;
+            }
+            return Status.Civil;
+        }
     }
 }

@@ -2,7 +2,7 @@
 using E_Government.Application.Services.Auth;
 using E_Government.Domain.Entities;
 using E_Government.Domain.Helper;
-using E_Government.Infrastructure.EGovernment_Unified;
+using E_Government.Infrastructure.Persistence._Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +22,7 @@ namespace E_Government.APIs.Extensions
             services.Configure<JwtSettings>(configuration.GetSection("JWTSettings"));
 
             // ✅ Add Entity Framework DbContext
-            services.AddDbContext<UnifiedDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("EGovernment_Unified2")));
 
             // ✅ Register ASP.NET Core Identity Services
@@ -38,7 +38,7 @@ namespace E_Government.APIs.Extensions
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
             })
-            .AddEntityFrameworkStores<UnifiedDbContext>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
             // ✅ CRITICAL FIX: Clear JWT claim mappings
@@ -105,7 +105,7 @@ namespace E_Government.APIs.Extensions
                     OnTokenValidated = context =>
                     {
                         Console.WriteLine("✅ Token validation successful!");
-                        Console.WriteLine($"IsAuthenticated: {context.Principal.Identity.IsAuthenticated}");
+                        Console.WriteLine($"IsAuthenticated: {context.Principal!.Identity!.IsAuthenticated}");
                         Console.WriteLine($"Claims: {string.Join(", ", context.Principal.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
                         return Task.CompletedTask;
                     },
@@ -146,7 +146,7 @@ namespace E_Government.APIs.Extensions
                                 };
 
                                 var principal = handler.ValidateToken(token, validationParams, out var validatedToken);
-                                Console.WriteLine($"✅ Manual validation successful: {principal.Identity.IsAuthenticated}");
+                                Console.WriteLine($"✅ Manual validation successful: {principal.Identity!.IsAuthenticated}");
                             }
                             catch (Exception validationEx)
                             {

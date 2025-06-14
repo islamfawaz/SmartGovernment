@@ -2,6 +2,7 @@
 using E_Government.Domain.Entities.CivilDocs;
 using E_Government.Domain.Entities.Enums;
 using E_Government.Domain.Entities.Liscenses;
+using E_Government.Domain.Entities.OTP;
 using Microsoft.AspNetCore.Identity;
 
 namespace E_Government.Domain.Entities
@@ -10,8 +11,9 @@ namespace E_Government.Domain.Entities
     {
          public required string NID { get; set; }      
         public string ? Address { get; set; }
-         public CustomerCategory Category { get; set; } = CustomerCategory.Residential;
+         public Status Status { get; set; }
 
+        public CustomerCategory CustomerCategory { get; set; } = CustomerCategory.Residential; // Default to Residential
         public Gender Gender { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
@@ -35,6 +37,8 @@ namespace E_Government.Domain.Entities
         public virtual ICollection<VehicleLicenseRenewal> VehicleLicenseRenewals { get; set; } = new List<VehicleLicenseRenewal>();
 
         public virtual ICollection<VehicleOwner> VehicleOwners { get; set; } = new List<VehicleOwner>();
+
+        public virtual ICollection<OtpCode>  OtpCodes { get; set; } = new HashSet<OtpCode>();
 
     }
 

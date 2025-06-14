@@ -18,7 +18,11 @@ namespace E_Government.Application.ServiceContracts
 
        Gender ExtractGender(string NID);
 
-        GovernorateDto ExtractGovernorateInfo(string NID);
+       
+       GovernorateDto ExtractGovernorateInfo(string NID);
+
+        Status ExtractStatus(GovernorateDto governorate);
+       
 
       //  int CalculateCheckDigit(string NID);
 

@@ -4,6 +4,7 @@ using E_Government.Application.Services.Admin;
 using E_Government.Application.Services.Auth;
 using E_Government.Application.Services.License;
 using E_Government.Application.Services.NIDValidation;
+using E_Government.Application.Services.OTP;
 using E_Government.Domain.Entities;
 using E_Government.Domain.Helper;
 using E_Government.Domain.Helper.Hub;
@@ -33,13 +34,15 @@ namespace E_Government.Application.Services.Common
         private readonly ILogger<BillingServices> logg;
         private readonly IGovernorateService governorate;
         private readonly INIDValidationService validationService;
-        private readonly Lazy<IAuthService> _authService;
+        private readonly ILogger<OTPService> loggerOtp;
+        private readonly IMailSettings mailSettings;
         private readonly Lazy<ICivilDocumentsService> _civilDocsService;
         private readonly Lazy<ILicenseService> _licenseService;
         private readonly Lazy<BillingServices> _billingServices;
         private readonly Lazy<INIDValidationService> _validationService;
+        private readonly Lazy<IOTPService> _OTPService;
 
-        public ServiceManager(IUnitOfWork unitOfWork,IMapper mapper,ILogger<AdminService> logger, IHubContext<DashboardHub, IHubService> dashboardHubContext, UserManager<ApplicationUser> userManager, ILicenseRepositoryFactory licenseRepositoryFactory ,SignInManager<ApplicationUser> signInManager, IOptions<JwtSettings> jwtSettings ,IPaymentService paymentService ,IBillNumberGenerator billNumberGenerator, ILogger<BillingServices> logg ,IGovernorateService governorate,INIDValidationService validationService)
+        public ServiceManager(IUnitOfWork unitOfWork,IMapper mapper,ILogger<AdminService> logger, IHubContext<DashboardHub, IHubService> dashboardHubContext, UserManager<ApplicationUser> userManager, ILicenseRepositoryFactory licenseRepositoryFactory ,SignInManager<ApplicationUser> signInManager, IOptions<JwtSettings> jwtSettings ,IPaymentService paymentService ,IBillNumberGenerator billNumberGenerator, ILogger<BillingServices> logg ,IGovernorateService governorate,INIDValidationService validationService,ILogger<OTPService> loggerOtp,IMailSettings mailSettings)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -54,13 +57,14 @@ namespace E_Government.Application.Services.Common
             this.logg = logg;
             this.governorate = governorate;
             this.validationService = validationService;
+            this.loggerOtp = loggerOtp;
+            this.mailSettings = mailSettings;
             _adminService = new Lazy<IAdminService>(() => new AdminService(_unitOfWork!, _mapper!, _logger!, _dashboardHubContext!, _userManager, _licenseRepositoryFactory));
-            _authService = new Lazy<IAuthService>(() => new AuthService(_userManager,_signInManager,_jwtSettings, validationService));
             _civilDocsService=new Lazy<ICivilDocumentsService>(()=>new CivilDocumentsService(_unitOfWork));
             _licenseService = new Lazy<ILicenseService>(() =>new LicenseService(_unitOfWork));
             _billingServices = new Lazy<BillingServices>(() => new BillingServices(_unitOfWork, billNumberGenerator, paymentService, logg));
             _validationService = new Lazy<INIDValidationService>(() => new NIDValidationService(governorate));
-            
+            _OTPService = new Lazy<IOTPService>(() => new OTPService(_unitOfWork, _userManager,loggerOtp,mailSettings));
 
         }
 
@@ -71,7 +75,6 @@ namespace E_Government.Application.Services.Common
 
         public IAdminService AdminService => _adminService.Value;
 
-        public IAuthService AuthService => _authService.Value;
 
         public ICivilDocumentsService CivilDocsService => _civilDocsService.Value;
 
@@ -81,5 +84,6 @@ namespace E_Government.Application.Services.Common
 
         public INIDValidationService ValidationService => _validationService.Value;
 
+        public IOTPService OTPService => _OTPService.Value;
     }
 }

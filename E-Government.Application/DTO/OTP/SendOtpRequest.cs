@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Government.Domain.Entities.Enums
+namespace E_Government.Application.DTO.OTP
 {
-    public enum CustomerCategory
+    public class SendOtpRequest
     {
-        Residential,
-        Commercial
+        public string Email { get; set; } = string.Empty;
 
     }
 }

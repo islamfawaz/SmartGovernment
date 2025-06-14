@@ -2,11 +2,12 @@ using E_Government.Application.DTO.License;
 using E_Government.Application.ServiceContracts.Common.Contracts.Infrastructure;
 using E_Government.Domain.Entities.Liscenses;
 using E_Government.Domain.RepositoryContracts.Persistence;
-using E_Government.Infrastructure.Common;
-using E_Government.Infrastructure.EGovernment_Unified;
-using E_Government.Infrastructure.Generic_Repository;
 using E_Government.Infrastructure.Infrastructure.Services;
 using E_Government.Infrastructure.Infrastructure.Services.User;
+using E_Government.Infrastructure.Persistence._Data;
+using E_Government.Infrastructure.Persistence.Generic_Repository;
+using E_Government.Infrastructure.Persistence.Repositories;
+using E_Government.Infrastructure.Persistence.UnitOfWork;
 using E_Government.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +27,7 @@ namespace E_Government.Infrastructure
             }
             else
             {
-                services.AddDbContext<UnifiedDbContext>(options =>
+                services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(connectionString, sqlServerOptionsAction: sqlOptions =>
                     {
                         sqlOptions.EnableRetryOnFailure(
@@ -37,7 +38,7 @@ namespace E_Government.Infrastructure
             }
 
 
-            services.AddScoped<IDbInitializer, DbInitializer>();
+            services.AddScoped<IApplicationDbInitializer, ApplicationDbInitializer>();
             // --- Register UnitOfWork and Generic Repository ---
             services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
@@ -53,6 +54,7 @@ namespace E_Government.Infrastructure
             services.AddScoped<IGenericRepository<LicenseReplacementRequest, int>, GenericRepository<LicenseReplacementRequest, int>>();
             services.AddScoped<IGenericRepository<VehicleRenwal, int>, GenericRepository<VehicleRenwal, int>>();
             services.AddScoped<ILicenseRepositoryFactory, LicenseRepositoryFactory>();
+            services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
 
             return services;
         }

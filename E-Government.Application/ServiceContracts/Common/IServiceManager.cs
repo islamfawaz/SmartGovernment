@@ -10,10 +10,10 @@ namespace E_Government.Domain.ServiceContracts.Common
     public interface IServiceManager
     {
         public IAdminService  AdminService { get; }
-        public IAuthService AuthService { get; }
         public IBillingService BillingService { get;  }
         public ICivilDocumentsService CivilDocsService { get; }
         public ILicenseService LicenseService { get; }
         public INIDValidationService ValidationService { get;  }
+        public IOTPService OTPService { get;  }
     }
 }

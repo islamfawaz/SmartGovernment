@@ -11,10 +11,10 @@ namespace E_Government.Domain.RepositoryContracts.Persistence
     {
         IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
             where TEntity : class;
-            
 
-     
-       
+
+        public IOtpCodeRepository OtpCodeRepository { get;  }
+
 
         Task<int> CompleteAsync();
 

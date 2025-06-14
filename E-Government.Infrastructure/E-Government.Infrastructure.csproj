@@ -10,11 +10,6 @@
 	</PropertyGroup>
 
 	<!-- Removed Compile Include for json file, as it's typically content -->
-	<ItemGroup>
-	  <None Include="EGovernment_Unified\Seeds\metersReading.json">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<!-- Updated Package Versions for .NET 8 -->

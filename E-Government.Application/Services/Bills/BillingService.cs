@@ -60,10 +60,7 @@ namespace E_Government.Application.Services
                 }
 
                 // 2. Validate user has confirmed email
-                if (!user.EmailConfirmed)
-                {
-                    user.EmailConfirmed = true;
-                }
+               
                 if (!user.EmailConfirmed)
                 {
                     _logger.LogWarning("User {NID} email not confirmed.", user.NID);
@@ -122,13 +119,13 @@ namespace E_Government.Application.Services
                     UseNID = user.NID, // Ensure UserId is set
                     PreviousReading = latestReading?.Value ?? 0,
                     CurrentReading = request.CurrentReading,
-                    UnitPrice = GetUnitPrice(request.Type, user.Category),
+                    UnitPrice = GetUnitPrice(request.Type, user.CustomerCategory),
                     Type = request.Type,
                     Amount = CalculateBillAmount(
                         currentReading: request.CurrentReading,
                         previousReading: latestReading?.Value ?? 0,
                         type: request.Type,
-                        category: user.Category),
+                        category: user.CustomerCategory),
                     PdfUrl = null, // Will be generated later
                     StripePaymentId = null, // Will be set after payment intent creation
                     PaymentId = null // Will be set after successful payment

@@ -8,7 +8,7 @@ namespace E_Government.APIs.Extensions
         {
             using var scope = app.Services.CreateAsyncScope();
             var services = scope.ServiceProvider;
-            var storeContextInitializer = services.GetRequiredService<IDbInitializer>();
+            var storeContextInitializer = services.GetRequiredService<IApplicationDbInitializer>();
 
             //Ask run time enviroment for object from store context explicitly
 
