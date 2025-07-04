@@ -6,6 +6,8 @@ namespace E_Government.Domain.RepositoryContracts.Persistence
    public interface IGenericRepository<TEntity, TKey>
         where TEntity : class
     {
+        Task<TEntity?> GetByPublicIdAsync(Guid publicId);
+
         Task<Dictionary<string, int>> GetStatusCountsAsync(Expression<Func<TEntity, bool>> baseFilter = null);
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity?> GetAsync(TKey id);

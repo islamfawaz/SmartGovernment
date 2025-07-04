@@ -3,5 +3,6 @@
    public interface ILicenseRepositoryFactory
     {
         ILicenseRequestRepository GetRepository(string requestType);
+
     }
 }

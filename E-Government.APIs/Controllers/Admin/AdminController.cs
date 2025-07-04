@@ -3,9 +3,12 @@ using E_Government.Application.DTO.AdminDashboard;
 using E_Government.Application.DTO.CivilDocs;
 using E_Government.Application.DTO.License;
 using E_Government.Application.ServiceContracts;
+using E_Government.Application.Services.License;
 using E_Government.Domain.Entities;
+using E_Government.Domain.Helper.Hub;
 using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace E_Government.APIs.Controllers.Admin
 {
@@ -14,19 +17,24 @@ namespace E_Government.APIs.Controllers.Admin
     [ApiController]
     public class AdminController : ControllerBase // Or Controller if you need Views, but for API, ControllerBase is fine
     {
+        private readonly IAdminService _adminService;
         private readonly ILogger<AdminController> _logger;
         private readonly IServiceManager _serviceManager;
+        private readonly ILicenseService licenseService;
 
-        // private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext; // Example if Hub is used directly
 
-        public AdminController(IAdminService adminService,ILogger<AdminController> logger,IServiceManager serviceManager
+         private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext; // Example if Hub is used directly
 
-            // IHubContext<DashboardHub, IHubService> dashboardHubContext // Example
+        public AdminController(IAdminService adminService,ILogger<AdminController> logger,IServiceManager serviceManager,ILicenseService licenseService,
+
+             IHubContext<DashboardHub, IHubService> dashboardHubContext // Example
             )
         {
+            _adminService = adminService;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceManager = serviceManager;
-            // _dashboardHubContext = dashboardHubContext; // Example
+            this.licenseService = licenseService;
+            _dashboardHubContext = dashboardHubContext; 
         }
 
         [HttpGet("statistics")]
@@ -37,7 +45,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation("AdminController: Attempting to fetch dashboard statistics.");
             try
             {
-                var statistics = await _serviceManager.AdminService.GetDashboardStatisticsAsync();
+                var statistics = await _adminService.GetDashboardStatisticsAsync();
                 return Ok(statistics);
             }
             catch (Exception ex)
@@ -46,6 +54,7 @@ namespace E_Government.APIs.Controllers.Admin
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching dashboard statistics.");
             }
         }
+
 
         [HttpGet("requests")]
         [ProducesResponseType(typeof(PagedResult<RequestSummaryDto>), StatusCodes.Status200OK)]
@@ -60,7 +69,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch requests. Page: {pageNumber}, Size: {pageSize}, Status: {status}, Type: {type}, Search: {searchTerm}");
             try
             {
-                var requests = await _serviceManager.AdminService.GetAllRequestsAsync(pageNumber, pageSize, status, type, searchTerm);
+                var requests = await _adminService.GetAllRequestsAsync(pageNumber, pageSize, status, type, searchTerm);
                 return Ok(requests);
             }
             catch (Exception ex)
@@ -79,7 +88,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch license request details for ID: {id}");
             try
             {
-                var details = await _serviceManager.AdminService.GetLicenseRequestDetailsAsync(id);
+                var details = await _adminService.GetLicenseRequestDetailsAsync(id);
                 if (details == null)
                 {
                     _logger.LogWarning($"AdminController: License request with ID {id} not found.");
@@ -103,7 +112,7 @@ namespace E_Government.APIs.Controllers.Admin
             _logger.LogInformation($"AdminController: Attempting to fetch civil document request details for ID: {id}");
             try
             {
-                var details = await _serviceManager.AdminService.GetCivilDocumentRequestDetailsAsync(id);
+                var details = await _adminService.GetCivilDocumentRequestDetailsAsync(id);
                 if (details == null)
                 {
                     _logger.LogWarning($"AdminController: Civil document request with ID {id} not found.");
@@ -132,16 +141,29 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _serviceManager.AdminService.ApproveLicenseRequestAsync(id, input);
-                if (!success)
+                var paymentCode = await licenseService.ApproveLicenseRequestAsync(id, input);
+                if (paymentCode is null)
                 {
                     _logger.LogWarning($"AdminController: Failed to approve license request ID {id} or request not found.");
                     return NotFound("Request not found or approval failed."); // Or BadRequest depending on why it failed
                 }
                 // TODO: Consider what to return. Frontend might expect updated request summary or just success.
-                // await _dashboardHubContext.Clients.All.SendRequestUpdated(id.ToString(), "License", "Approved"); // Example SignalR notification
-                // await _dashboardHubContext.Clients.All.SendAdminNotification($"License request {id} approved.");
-                return Ok(new { message = "License request approved successfully." });
+                await _dashboardHubContext.Clients.All.ReceiveRequestUpdated(new RequestSummaryDto
+                {
+                    RequestId = id,
+                    RequestType = "License",
+                    Status = "Approved",
+                     RequestDate = DateTime.UtcNow,
+                    DetailsApiEndpoint = $"/api/admin/requests/license/{id}"
+                });
+                await _dashboardHubContext.Clients.All.SendAdminNotification($"License request {id} approved.");
+                return Ok(new
+                {
+                    message = "License request approved successfully.",
+                    paymentCode = paymentCode.PaymentCode,
+                    amount = paymentCode.Amount,
+                    dueDate = paymentCode.DueDate
+                });
             }
             catch (Exception ex)
             {
@@ -165,7 +187,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _serviceManager.AdminService.RejectLicenseRequestAsync(id, input);
+                var success = await licenseService.RejectLicenseRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to reject license request ID {id} or request not found.");
@@ -196,7 +218,7 @@ namespace E_Government.APIs.Controllers.Admin
             }
             try
             {
-                var success = await _serviceManager.AdminService.ApproveCivilDocumentRequestAsync(id, input);
+                var success = await _adminService.ApproveCivilDocumentRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to approve civil document request ID {id} or request not found.");
@@ -213,6 +235,29 @@ namespace E_Government.APIs.Controllers.Admin
             }
         }
 
+
+        [HttpGet("payment-code/{requestId}")]
+        public async Task<IActionResult> GetPaymentCode(Guid requestId)
+        {
+            try
+            {
+                var request = await licenseService.GetRequestByIdAsync(requestId);
+                if (request == null)
+                    return NotFound(new { Success = false, Message = "Request not found" });
+
+                if (request.Status != "Approved")
+                    return BadRequest(new { Success = false, Message = "Request is not approved yet" });
+
+                var paymentCode = await licenseService.GeneratePaymentCode(request);
+                return Ok(new { Success = true, PaymentCode = paymentCode });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting payment code for request {RequestId}", requestId);
+                return StatusCode(500, new { Success = false, Message = "An error occurred while generating payment code" });
+            }
+        }
+
         [HttpPost("requests/civil/{id:guid}/reject")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -224,18 +269,22 @@ namespace E_Government.APIs.Controllers.Admin
             if (!ModelState.IsValid || string.IsNullOrWhiteSpace(input.Notes))
             {
                 ModelState.AddModelError("Notes", "Rejection notes are required.");
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Rejection notes are required.",
+                    Errors = ModelState
+                });
             }
             try
             {
-                var success = await _serviceManager.AdminService.RejectCivilDocumentRequestAsync(id, input);
+                var success = await _adminService.RejectCivilDocumentRequestAsync(id, input);
                 if (!success)
                 {
                     _logger.LogWarning($"AdminController: Failed to reject civil document request ID {id} or request not found.");
                     return NotFound("Request not found or rejection failed.");
                 }
-                // await _dashboardHubContext.Clients.All.SendRequestUpdated(id.ToString(), "CivilDocument", "Rejected"); // Example SignalR notification
-                // await _dashboardHubContext.Clients.All.SendAdminNotification($"Civil document request {id} rejected.");
+                await _dashboardHubContext.Clients.All.SendAdminNotification($"Civil document request {id} rejected.");
                 return Ok(new { message = "Civil document request rejected successfully." });
             }
             catch (Exception ex)
@@ -243,6 +292,9 @@ namespace E_Government.APIs.Controllers.Admin
                 _logger.LogError(ex, $"AdminController: Error rejecting civil document request ID: {id}.");
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while rejecting the civil document request.");
             }
+
+
+
         }
     }
 }

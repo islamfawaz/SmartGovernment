@@ -1,4 +1,5 @@
 ﻿using E_Government.APIs.Controllers.Base;
+using E_Government.Application.ServiceContracts;
 using E_Government.Domain.Entities.DataModels;
 using E_Government.Domain.ServiceContracts;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +8,11 @@ namespace E_Government.APIs.Controllers.Prediction
 {
     public class BillRecommendationsController :ApiControllerBase
     {
-        private readonly IBillPredictionService _predictionService;
-                                                                                                                                    
-        public BillRecommendationsController(IBillPredictionService predictionService)
+        private readonly IModelService service;
+
+        public BillRecommendationsController(IModelService service)
         {
-           _predictionService = predictionService;
+            this.service = service;
         }
 
         [HttpPost("analyze")] 
@@ -22,7 +23,7 @@ namespace E_Government.APIs.Controllers.Prediction
                 return BadRequest("بيانات الفاتورة مطلوبة");
             }
 
-            var recommendations = await _predictionService.GetRecommendationsAsync(billData);
+            var recommendations = await service.GetRecommendationsAsync(billData);
             return Ok(recommendations);
         }
     }

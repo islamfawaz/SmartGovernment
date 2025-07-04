@@ -39,7 +39,6 @@ namespace E_Government.Infrastructure
 
 
             services.AddScoped<IApplicationDbInitializer, ApplicationDbInitializer>();
-            // --- Register UnitOfWork and Generic Repository ---
             services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             // --- Register Specific Infrastructure Services ---
@@ -47,13 +46,6 @@ namespace E_Government.Infrastructure
 
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IBillNumberGenerator, BillNumberGenerator>();  
-            services.AddScoped<DrivingLicenseRenewalRepository>();
-            services.AddScoped<LicenseReplacementRequestRepository>();
-            services.AddScoped<VehicleLicenseRenewalRepository>();
-            services.AddScoped<IGenericRepository<DrivingLicenseRenewal, int>, GenericRepository<DrivingLicenseRenewal, int>>();
-            services.AddScoped<IGenericRepository<LicenseReplacementRequest, int>, GenericRepository<LicenseReplacementRequest, int>>();
-            services.AddScoped<IGenericRepository<VehicleRenwal, int>, GenericRepository<VehicleRenwal, int>>();
-            services.AddScoped<ILicenseRepositoryFactory, LicenseRepositoryFactory>();
             services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
 
             return services;

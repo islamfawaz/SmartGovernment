@@ -15,7 +15,11 @@ namespace E_Government.Domain.Entities.DataModels
         public float Score { get; set; }
         [ColumnName("Probability")]
         public float Probability { get; set; }
-        [ColumnName("Features")] public VBuffer<float> Features { get; set; }
+        [ColumnName("Features")] 
+        public VBuffer<float> Features { get; set; }
+
+        public string PredictionText => PredictedLabel ? "High Bill Expected" : "Normal Bill Expected";
+        public float ConfidencePercentage => Probability * 100;
 
     }
 }

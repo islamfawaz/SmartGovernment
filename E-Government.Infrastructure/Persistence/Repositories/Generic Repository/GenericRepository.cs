@@ -97,6 +97,12 @@ namespace E_Government.Infrastructure.Persistence.Generic_Repository
             };
         }
 
+        public async Task<TEntity?> GetByPublicIdAsync(Guid publicId)
+        {
+            return await _dbContext.Set<TEntity>()
+                .AsTracking()
+                .FirstOrDefaultAsync(e => EF.Property<Guid>(e, "PublicId") == publicId);
+        }
 
 
         public async Task<PagedResult<TEntity>> GetPagedListAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>> include = null)

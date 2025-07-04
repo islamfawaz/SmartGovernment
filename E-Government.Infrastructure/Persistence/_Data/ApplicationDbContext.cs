@@ -6,6 +6,7 @@ using E_Government.Domain.Entities.OTP;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace E_Government.Infrastructure.Persistence._Data
 {
@@ -19,19 +20,8 @@ namespace E_Government.Infrastructure.Persistence._Data
 
         public DbSet<Meter> Meters { get; set; }
         public DbSet<Bill> Bills { get; set; }
-     //   public DbSet<DrivingLicense> DrivingLicenses { get; set; }
-        public DbSet<DrivingLicenseRenewal> DrivingLicenseRenewals { get; set; }
-        public DbSet<VehicleLicenseRenewal> VehicleLicenseRenewals { get; set; }
 
-        public DbSet<LicenseRequest> LicenseRequests { get; set; }
-        public DbSet<TrafficViolationPayment> TrafficViolationPayments { get; set; }
-
-        public DbSet<DrivingLicense> DrivingLicenses { get; set; }
-        public DbSet<LicenseReplacementRequest> LicenseReplacementRequests { get; set; }
-
-
-        public DbSet<VehicleOwner> VehicleOwners { get; set; }
-
+        public DbSet<ServicePrice> ServicePrices { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<MeterReading> MeterReadings { get; set; }
@@ -40,31 +30,132 @@ namespace E_Government.Infrastructure.Persistence._Data
         public DbSet<CivilDocumentAttachment> CivilDocumentAttachments { get; set; }
         public DbSet<CivilDocumentRequestHistory> CivilDocumentRequestHistories { get; set; }
 
+        public DbSet<LicenseRequest>  LicenseRequests { get; set; }
+
+        public DbSet<LicenseRequestHistory> LicenseRequestHistories { get; set; }
+
         public DbSet<OtpCode> OtpCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder); // Call base first to get default Identity configurations
+            base.OnModelCreating(builder);
+            builder.Entity<ServicePrice>().HasData(
+      new ServicePrice
+      {
+          Id = 1,
+          ServiceCode = "DRIVING_RENEW",
+          ServiceName = "تجديد رخصة القيادة",
+          Price = 100.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 2,
+          ServiceCode = "DRIVING_REPLACE_LOST",
+          ServiceName = "بدل فاقد لرخصة القيادة",
+          Price = 120.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 3,
+          ServiceCode = "DRIVING_NEW",
+          ServiceName = "استخراج رخصة قيادة جديدة",
+          Price = 200.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 4,
+          ServiceCode = "LICENSE_DIGITAL",
+          ServiceName = "رخصة رقمية",
+          Price = 80.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 5,
+          ServiceCode = "VEHICLE_RENEW",
+          ServiceName = "تجديد رخصة مركبة",
+          Price = 150.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 6,
+          ServiceCode = "VEHICLE_NEW",
+          ServiceName = "رخصة مركبة جديدة",
+          Price = 180.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 7,
+          ServiceCode = "TRAFFIC_FINE_VIEW",
+          ServiceName = "الاستعلام عن مخالفات المرور",
+          Price = 0.00m,
+          IsActive = true
+      },
+      new ServicePrice
+      {
+          Id = 8,
+          ServiceCode = "TRAFFIC_FINE_PAY",
+          ServiceName = "دفع مخالفات المرور",
+          Price = 50.00m,
+          IsActive = true
+      }
+  );
 
-            // Apply your specific entity configurations, which includes setting NID as PK for ApplicationUser
-            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-            // --- Explicitly re-configure IdentityUserRole to use NID as the principal key for UserId ---
-            builder.Entity<IdentityUserRole<string>>(b =>
+
+            // Configure Identity tables to use NID as foreign key
+            builder.Entity<IdentityUserRole<string>>(entity =>
             {
-                // The composite primary key for IdentityUserRole (UserId, RoleId) is standard.
-                // b.HasKey(ur => new { ur.UserId, ur.RoleId }); // This is usually handled by base.OnModelCreating
+                entity.ToTable("AspNetUserRoles");
+                entity.HasKey(ur => new { ur.UserId, ur.RoleId });
 
-                // Configure the relationship from IdentityUserRole to ApplicationUser
-                b.HasOne<ApplicationUser>() // Specifies the principal entity
-                    .WithMany()             // Assumes ApplicationUser doesn't have a direct ICollection<IdentityUserRole<string>> navigation property for roles (which is typical)
-                    .HasForeignKey(ur => ur.UserId) // The foreign key property in IdentityUserRole<string>
-                    .HasPrincipalKey(u => u.NID);   // CRUCIAL: Tells EF Core that ur.UserId maps to ApplicationUser.NID
-
+                // Configure the foreign key to reference NID instead of Id
+                entity.HasOne<ApplicationUser>()
+                    .WithMany()
+                    .HasForeignKey(ur => ur.UserId)
+                    .HasPrincipalKey(u => u.NID)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
-           
-           
+            builder.Entity<IdentityUserClaim<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserClaims");
+                entity.HasOne<ApplicationUser>()
+                    .WithMany()
+                    .HasForeignKey(uc => uc.UserId)
+                    .HasPrincipalKey(u => u.NID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<IdentityUserLogin<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserLogins");
+                entity.HasKey(ul => new { ul.LoginProvider, ul.ProviderKey });
+                entity.HasOne<ApplicationUser>()
+                    .WithMany()
+                    .HasForeignKey(ul => ul.UserId)
+                    .HasPrincipalKey(u => u.NID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<IdentityUserToken<string>>(entity =>
+            {
+                entity.ToTable("AspNetUserTokens");
+                entity.HasKey(ut => new { ut.UserId, ut.LoginProvider, ut.Name });
+                entity.HasOne<ApplicationUser>()
+                    .WithMany()
+                    .HasForeignKey(ut => ut.UserId)
+                    .HasPrincipalKey(u => u.NID)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Apply other configurations
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
 
     }

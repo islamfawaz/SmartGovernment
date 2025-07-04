@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace E_Government.Application.ServiceContracts
 {
-  public  interface IPredictionService
+    public interface IPredictionService : IDisposable
     {
         BillPrediction Predict(BillData input);
+        Task<BillPrediction> PredictAsync(BillData input);
+        Task ReloadModelAsync();
 
     }
 }

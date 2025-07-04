@@ -21,6 +21,7 @@ namespace E_Government.Application.ServiceContracts
         Task ReceiveNewRequest(RequestSummaryDto newRequest);
         Task ReceiveRequestDeleted(string requestId); // If you implement request deletion notifications
         Task ReceiveChartUpdate(string chartName, ChartDataDto chartData);
+
         Task ReceiveUserListUpdate(PagedResult<UserSummaryDto> users); // If you implement user list updates
 
         // If your existing methods like SendRequestNotification, SendRequestStatusUpdate 

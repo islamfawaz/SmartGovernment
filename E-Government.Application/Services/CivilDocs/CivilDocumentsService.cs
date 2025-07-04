@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using E_Government.Application.DTO.CivilDocs;
 using E_Government.Application.ServiceContracts;
-using E_Government.Domain.DTO;
 using E_Government.Domain.Entities;
 using E_Government.Domain.Entities.CivilDocs;
 using E_Government.Domain.RepositoryContracts.Persistence;
-using E_Government.Domain.ServiceContracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Application.Services
@@ -69,6 +63,10 @@ namespace E_Government.Application.Services
                 OwnerNID = trimmedOwnerNID,
                 OwnerMotherName = dto.OwnerMotherName,
                 CopiesCount = dto.CopiesCount,
+                City= dto.City,
+                DetailsAddress= dto.DetailsAddress,
+                District= dto.District,
+                Governorate= dto.Governorate,
                 Status = "New",
                 CreatedAt = now,
                 LastUpdated = now,
@@ -108,14 +106,18 @@ namespace E_Government.Application.Services
                 Id = entity.Id,
                 DocumentType = entity.DocumentType,
                 ApplicantName = entity.ApplicantName,
-                ApplicantNID = entity.ApplicantNID?.Trim(),
+                ApplicantNID = entity.ApplicantNID?.Trim()!,
                 Relation = entity.Relation,
                 OwnerName = entity.OwnerName,
-                OwnerNID = entity.OwnerNID?.Trim(),
+                OwnerNID = entity.OwnerNID?.Trim()!,
                 OwnerMotherName = entity.OwnerMotherName,
                 CopiesCount = entity.CopiesCount,
                 Status = entity.Status,
                 CreatedAt = entity.CreatedAt,
+                City = entity.City,
+                DetailsAddress=entity.DetailsAddress,
+                District=entity.District,
+                Governorate=entity.Governorate,
                 Attachments = entity.Attachments?.Select(a => new CivilDocumentAttachmentDto
                 {
                     Id = a.Id,
@@ -156,6 +158,10 @@ namespace E_Government.Application.Services
                 OwnerNID = r.OwnerNID?.Trim(),
                 OwnerMotherName = r.OwnerMotherName,
                 CopiesCount = r.CopiesCount,
+                City = r.City,
+                DetailsAddress = r.DetailsAddress,
+                District= r.District,
+                Governorate=r.Governorate,
                 Status = r.Status,
                 CreatedAt = r.CreatedAt,
                 Attachments = r.Attachments?.Select(a => new CivilDocumentAttachmentDto

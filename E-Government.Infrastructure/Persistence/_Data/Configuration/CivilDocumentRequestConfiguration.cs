@@ -21,11 +21,10 @@ namespace E_Government.Infrastructure.Persistence._Data.Configuration
                 .IsRequired()
                 .HasMaxLength(100);
 
+            // Configure the foreign key column to match AspNetUsers.NID
             builder.Property(r => r.ApplicantNID)
                 .IsRequired()
-                .HasMaxLength(50)
-                .IsFixedLength()
-                .HasColumnType("nchar(50)");
+                .HasColumnType("nvarchar(50)");
 
             builder.Property(r => r.Relation)
                 .HasMaxLength(50);

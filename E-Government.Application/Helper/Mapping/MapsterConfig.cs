@@ -1,6 +1,8 @@
 ﻿using E_Government.Application.DTO.Bills;
+using E_Government.Application.DTO.License;
 using E_Government.Domain.DTO;
 using E_Government.Domain.Entities.Bills;
+using E_Government.Domain.Entities.Liscenses;
 using Mapster;
 
 namespace E_Government.Domain.Helpers
@@ -44,6 +46,8 @@ namespace E_Government.Domain.Helpers
                 .Map(dest => dest.PaymentId, src => src.PaymentId)
                 .Map(dest => dest.UseNID, src => src.UserNID)
                 .Map(dest => dest.MeterId, src => src.MeterId);
+
+           
         }
     }
 }

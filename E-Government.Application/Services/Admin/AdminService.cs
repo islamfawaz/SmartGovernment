@@ -26,7 +26,6 @@ namespace E_Government.Application.Services.Admin
         private readonly ILogger<AdminService> _logger;
         private readonly IHubContext<DashboardHub, IHubService> _dashboardHubContext;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILicenseRepositoryFactory _licenseRepositoryFactory;
 
         public AdminService(
             IUnitOfWork unitOfWork,
@@ -34,7 +33,7 @@ namespace E_Government.Application.Services.Admin
             ILogger<AdminService> logger,
             IHubContext<DashboardHub, IHubService> dashboardHubContext,
             UserManager<ApplicationUser> userManager,
-            ILicenseRepositoryFactory licenseRepositoryFactory
+            ILicenseService licenseService
 
             )
         {
@@ -43,19 +42,23 @@ namespace E_Government.Application.Services.Admin
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _dashboardHubContext = dashboardHubContext ?? throw new ArgumentNullException(nameof(dashboardHubContext));
             _userManager = userManager;
-            _licenseRepositoryFactory = licenseRepositoryFactory;
         }
 
         public async Task<DashboardStatisticsDto> GetDashboardStatisticsAsync()
         {
             _logger.LogInformation("AdminService: Fetching dashboard statistics.");
             var civilStatsRepo = _unitOfWork.GetRepository<CivilDocumentRequest, Guid>();
+            var licenseStatsRepo=  _unitOfWork.GetRepository<LicenseRequest,Guid>();
+
 
             // --- Temporary Diagnostic Logging ---
             try
             {
                 var allCivilRequests = await civilStatsRepo.GetAllAsync(); // Fetches all civil document requests
+                var allLicenseRequests = await licenseStatsRepo.GetAllAsync();
+
                 var distinctStatuses = allCivilRequests.Select(r => r.Status).Distinct().ToList();
+                var distenctLicenseStatuses = allLicenseRequests.Select(r => r.Status).Distinct().ToList();
                 _logger.LogInformation($"AdminService: Distinct CivilDocumentRequest Statuses found in DB: {string.Join(", ", distinctStatuses)}");
                 foreach (var req in allCivilRequests)
                 {
@@ -69,27 +72,28 @@ namespace E_Government.Application.Services.Admin
             // --- End Temporary Diagnostic Logging ---
 
             var civilStats = await civilStatsRepo.GetStatusCountsAsync();
+            var licenseStats = await licenseStatsRepo.GetStatusCountsAsync();
 
-            var licenseAggregatedStats = new Dictionary<string, int> { { "Total", 0 }, { "Pending", 0 }, { "Approved", 0 }, { "Rejected", 0 } };
+           //var licenseAggregatedStats = new Dictionary<string, int> { { "Total", 0 }, { "Pending", 0 }, { "Approved", 0 }, { "Rejected", 0 } };
 
-            foreach (var licenseTypeEntry in LicenseEntityTypes.TypeNameMap)
-            {
-                try
-                {
-                    var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(licenseTypeEntry.Value, typeof(int));
-                    dynamic repository = repoMethod.Invoke(_unitOfWork, null);
-                    var counts = await repository.GetStatusCountsAsync();
+            //foreach (var licenseTypeEntry in LicenseEntityTypes.TypeNameMap)
+            //{
+            //    try
+            //    {
+            //        var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(licenseTypeEntry.Value, typeof(int));
+            //        dynamic repository = repoMethod.Invoke(_unitOfWork, null);
+            //        var counts = await repository.GetStatusCountsAsync();
 
-                    licenseAggregatedStats["Total"] += counts.TryGetValue("Total", out int t) ? t : 0;
-                    licenseAggregatedStats["Pending"] += counts.TryGetValue("Pending", out int p) ? p : 0;
-                    licenseAggregatedStats["Approved"] += counts.TryGetValue("Approved", out int a) ? a : 0;
-                    licenseAggregatedStats["Rejected"] += counts.TryGetValue("Rejected", out int r) ? r : 0;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, $"Error counting {licenseTypeEntry.Key} requests for dashboard. Ensure entities have a 'Status' property and GetStatusCountsAsync is implemented in generic repository for int IDs.");
-                }
-            }
+            //        licenseAggregatedStats["Total"] += counts.TryGetValue("Total", out int t) ? t : 0;
+            //        licenseAggregatedStats["Pending"] += counts.TryGetValue("Pending", out int p) ? p : 0;
+            //        licenseAggregatedStats["Approved"] += counts.TryGetValue("Approved", out int a) ? a : 0;
+            //        licenseAggregatedStats["Rejected"] += counts.TryGetValue("Rejected", out int r) ? r : 0;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.LogError(ex, $"Error counting {licenseTypeEntry.Key} requests for dashboard. Ensure entities have a 'Status' property and GetStatusCountsAsync is implemented in generic repository for int IDs.");
+            //    }
+            //}
 
             var appUserRepo = _unitOfWork.GetRepository<ApplicationUser, string>();
             var totalUsers = await appUserRepo.CountAsync();
@@ -101,10 +105,10 @@ namespace E_Government.Application.Services.Admin
                 PendingCivilDocRequests = civilStats.TryGetValue("Pending", out int pc) ? pc : 0,
                 ApprovedCivilDocRequests = civilStats.TryGetValue("Approved", out int ac) ? ac : 0,
                 RejectedCivilDocRequests = civilStats.TryGetValue("Rejected", out int rc) ? rc : 0,
-                TotalLicenseRequests = licenseAggregatedStats["Total"],
-                PendingLicenseRequests = licenseAggregatedStats["Pending"],
-                ApprovedLicenseRequests = licenseAggregatedStats["Approved"],
-                RejectedLicenseRequests = licenseAggregatedStats["Rejected"],
+                TotalLicenseRequests = licenseStats.TryGetValue("Total", out int tl) ? tl : 0,
+                PendingLicenseRequests = licenseStats.TryGetValue("Pending", out int pl) ? pl : 0,
+                ApprovedLicenseRequests = licenseStats.TryGetValue("Approved", out int al) ? al : 0,
+                RejectedLicenseRequests = licenseStats.TryGetValue("Rejected", out int rl) ? rl : 0,
                 TotalUsers = (int)totalUsers,
                 ActiveUsers = (int)activeUsers,
                 OtherStats = new Dictionary<string, int>()
@@ -115,7 +119,7 @@ namespace E_Government.Application.Services.Admin
         }
         public async Task<PagedResult<RequestSummaryDto>> GetAllRequestsAsync(int pageNumber, int pageSize, string? statusFilter, string? typeFilter, string? searchTerm)
         {
-            _logger.LogInformation($"AdminService: Fetching requests. Page: {pageNumber}, Size: {pageSize}, Status: 	'{statusFilter}'	, Type: 	'{typeFilter}'	, Search: 	'{searchTerm}'	");
+            _logger.LogInformation($"AdminService: Fetching requests. Page: {pageNumber}, Size: {pageSize}, Status: '{statusFilter}', Type: '{typeFilter}', Search: '{searchTerm}'");
             var combinedRequests = new List<RequestSummaryDto>();
 
             // 1. Civil Document Requests
@@ -142,7 +146,7 @@ namespace E_Government.Application.Services.Admin
                 combinedRequests.AddRange(civilPagedResult.Items.Select(r => new RequestSummaryDto
                 {
                     RequestId = r.Id,
-                    RequestType = "CivilDocument",
+                    RequestType = r.DocumentType,
                     ApplicantName = r.ApplicantName,
                     ApplicantNID = r.ApplicantNID,
                     RequestDate = r.CreatedAt,
@@ -151,64 +155,42 @@ namespace E_Government.Application.Services.Admin
                 }));
             }
 
-            // 2. License Requests (This part is filtered in-memory after fetching all, so StringComparison.OrdinalIgnoreCase should work here)
-            foreach (var licenseTypeEntry in LicenseEntityTypes.TypeNameMap)
+            // 2. License Requests
+            if (string.IsNullOrEmpty(typeFilter) || typeFilter.Equals("License", StringComparison.OrdinalIgnoreCase))
             {
-                string licenseTypeName = licenseTypeEntry.Key;
-                Type entityType = licenseTypeEntry.Value;
-
-                if (string.IsNullOrEmpty(typeFilter) ||
-                    typeFilter.Equals(licenseTypeName, StringComparison.OrdinalIgnoreCase) ||
-                    (typeFilter.Equals("License", StringComparison.OrdinalIgnoreCase) && LicenseEntityTypes.TypeNameMap.ContainsKey(licenseTypeName)))
+                Expression<Func<LicenseRequest, bool>> licensePredicate = PredicateBuilder.True<LicenseRequest>();
+                if (!string.IsNullOrEmpty(statusFilter))
                 {
-                    try
-                    {
-                        var repo =_licenseRepositoryFactory.GetRepository(licenseTypeName);
-                        var licenses =await repo.GetAllAsync();
-
-                      //  var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(entityType, typeof(int));
-                       // dynamic repository = repoMethod.Invoke(_unitOfWork, null);
-                       // IEnumerable<dynamic> licenses = await repository.GetAllAsync();
-
-                        foreach (var lic in licenses)
-                        {
-                            bool matches = true;
-                            if (!string.IsNullOrEmpty(statusFilter) && lic.Status != null && !((string)lic.Status).Equals(statusFilter, StringComparison.OrdinalIgnoreCase))
-                            {
-                                matches = false;
-                            }
-
-                            if (!string.IsNullOrEmpty(searchTerm))
-                            {
-                                bool nameMatch = lic.Applicant.DisplayName != null && ((string)lic.Applicant.DisplayName).Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
-                                bool nidMatch = lic.ApplicantNID != null && ((string)lic.ApplicantNID).ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase);
-                                if (!nameMatch && !nidMatch) matches = false;
-                            }
-
-                            if (matches)
-                            {
-                                combinedRequests.Add(new RequestSummaryDto
-                                {
-                                    RequestId = lic.PublicId,
-                                    RequestType = licenseTypeName,
-                                    ApplicantName = lic.Applicant.DisplayName!,
-                                    ApplicantNID = lic.ApplicantNID!.ToString(),
-                                    RequestDate = lic.RequestDate,
-                                    Status = lic.Status!,
-                                    DetailsApiEndpoint = $"/api/admin/requests/license/{lic.PublicId}"
-                                });
-                            }
-                        }
-                    }
-                     catch (Exception ex)
-                    {
-                        _logger.LogError(ex, $"Error fetching or processing {licenseTypeName} requests. Ensure entities have PublicId, ApplicantName, ApplicantNID, RequestDate, Status properties.");
-                    }
+                    // Corrected to use ToLower() for case-insensitive comparison translatable by EF Core
+                    string lowerStatusFilter = statusFilter.ToLower();
+                    licensePredicate = licensePredicate.And(r => r.Status != null && r.Status.ToLower() == lowerStatusFilter);
                 }
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    licensePredicate = licensePredicate.And(r =>
+                        (r.ApplicantName != null && EF.Functions.Like(r.ApplicantName, $"%{searchTerm}%")) ||
+                        (r.ApplicantNID != null && EF.Functions.Like(r.ApplicantNID, $"%{searchTerm}%")) ||
+                        (r.LicenseType != null && EF.Functions.Like(r.LicenseType, $"%{searchTerm}%"))
+                    );
+                }
+                var licensePagedResult = await _unitOfWork.GetRepository<LicenseRequest, Guid>()
+                    .GetPagedListAsync(pageNumber, pageSize, licensePredicate, q => q.OrderByDescending(r => r.CreatedAt));
+
+                combinedRequests.AddRange(licensePagedResult.Items.Select(r => new RequestSummaryDto
+                {
+                    RequestId = r.Id,
+                    RequestType = r.LicenseType,
+                    ApplicantName = r.ApplicantName,
+                    ApplicantNID = r.ApplicantNID,
+                    RequestDate = r.CreatedAt,
+                    Status = r.Status,
+                    DetailsApiEndpoint = $"/api/admin/requests/license/{r.Id}"
+                }));
             }
 
+            // Apply ordering and pagination to the combined results
             var totalCount = combinedRequests.Count;
-            var orderedRequests = combinedRequests.OrderByDescending(r => r.RequestDate).ToList(); // Order combined list
+            var orderedRequests = combinedRequests.OrderByDescending(r => r.RequestDate).ToList();
 
             // Apply pagination to the combined, filtered, and ordered list
             var pagedItems = orderedRequests.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
@@ -229,7 +211,18 @@ namespace E_Government.Application.Services.Admin
                 .GetByIdWithIncludeAsync(id, q => q.Include(r => r.Attachments).Include(r => r.History));
 
             if (entity == null) throw new NotFoundException($"CivilDocumentRequest with ID {id} not found.");
-            return _mapper.Map<CivilDocumentRequestDetailsDto>(entity);
+            return new CivilDocumentRequestDetailsDto
+            {
+                Id = entity.Id,
+                ApplicantNID = entity.ApplicantNID,
+                ApplicantName = entity.ApplicantName,
+                DocumentType = entity.DocumentType,
+                RequestDate = entity.CreatedAt,
+                CurrentStatus = entity.Status,
+                Attachments = _mapper.Map<List<CivilDocumentAttachmentDto>>(entity.Attachments),
+                History = _mapper.Map<List<RequestHistoryDto>>(entity.History)
+            };
+
         }
         private async Task<bool> UpdateCivilDocumentRequestStatusAsync(Guid requestId, string newStatus, string? notes, bool sendSignalRNotification = true)
         {
@@ -245,7 +238,7 @@ namespace E_Government.Application.Services.Admin
                 Id = Guid.NewGuid(),
                 RequestId = requestId,
                 Status = newStatus,
-                Note = notes ?? string.Empty,
+                Note = notes ?? $"Status changed from {oldStatus} to {newStatus}",
                 ChangedAt = DateTime.UtcNow
             };
             await _unitOfWork.GetRepository<CivilDocumentRequestHistory, Guid>().AddAsync(civilHistory);
@@ -271,92 +264,25 @@ namespace E_Government.Application.Services.Admin
             return await UpdateCivilDocumentRequestStatusAsync(id, "Rejected", input.Notes);
         }
 
-        private async Task<(dynamic? entity, dynamic? repository, string entityTypeName, int entityIntId)>
-            GetLicenseEntityAndRepoByPublicIdAsync(Guid publicId, string operationName)
+        public async Task<LicenseRequestDetailsDto> GetLicenseRequestDetailsAsync(Guid id)
         {
-            _logger.LogInformation($"AdminService ({operationName}): Locating license entity with PublicID: {publicId}");
-            foreach (var licenseTypeEntry in LicenseEntityTypes.TypeNameMap)
+            var entity = await _unitOfWork.GetRepository<LicenseRequest, Guid>().GetByIdWithIncludeAsync(id, q => q.Include(r => r.LicenseRequestHistories));
+
+            if (entity == null) throw new NotFoundException($"CivilDocumentRequest with ID {id} not found.");
+
+            return new LicenseRequestDetailsDto
             {
-                Type concreteEntityType = licenseTypeEntry.Value;
-                var repoMethod = typeof(IUnitOfWork).GetMethod("GetRepository").MakeGenericMethod(concreteEntityType, typeof(int));
-                dynamic repository = repoMethod.Invoke(_unitOfWork, null);
-
-                IEnumerable<dynamic> allEntities = await repository.GetAllAsync();
-                var entity = allEntities.FirstOrDefault(e => e.PublicId == publicId);
-
-                if (entity != null)
-                {
-                    _logger.LogInformation($"Found entity of type {licenseTypeEntry.Key} with PublicID {publicId}");
-                    return (entity, repository, licenseTypeEntry.Key, (int)entity.Id);
-                }
-            }
-            _logger.LogWarning($"AdminService ({operationName}): No license entity found with PublicID {publicId}.");
-            throw new NotFoundException($"License request with PublicID {publicId} not found.");
-        }
-
-        public async Task<LicenseRequestDetailsDto> GetLicenseRequestDetailsAsync(Guid publicId)
-        {
-            var (entity, _, entityTypeName, _) = await GetLicenseEntityAndRepoByPublicIdAsync(publicId, nameof(GetLicenseRequestDetailsAsync));
-
-            var detailsDto = new LicenseRequestDetailsDto
-            {
-                Id = publicId,
-                ApplicantNID = entity.ApplicantNID.ToString(),
+                Id = entity.Id,
+                ApplicantNID = entity.ApplicantNID,
                 ApplicantName = entity.ApplicantName,
-                LicenseType = entityTypeName,
-                RequestDate = entity.RequestDate,
+                LicenseType = entity.LicenseType,
+                RequestDate = entity.CreatedAt,
                 CurrentStatus = entity.Status,
+                History = _mapper.Map<List<RequestHistoryDto>>(entity.LicenseRequestHistories)
             };
-
-            if (entity is DrivingLicenseRenewal dlr)
-            {
-                detailsDto.LicenseNumber = dlr.CurrentLicenseNumber.ToString();
-            }
-            return detailsDto;
         }
-
-        private async Task<bool> UpdateLicenseRequestStatusAsync(Guid publicId, string newStatus, string? notes, bool sendSignalRNotification = true)
-        {
-            var (request, repository, licenseType, entityIntId) = await GetLicenseEntityAndRepoByPublicIdAsync(publicId, "UpdateLicenseRequestStatus");
-
-            string oldStatus = request.Status;
-            request.Status = newStatus;
-            request.LastUpdated = DateTime.UtcNow;
-            if (notes != null) request.Notes = notes;
-
-            _logger.LogWarning($"LicenseRequestHistory persistence for licenses is conceptual in this AdminService version and not fully implemented.");
-
-            await _unitOfWork.CompleteAsync();
-            _logger.LogInformation($"AdminService: License request {publicId} (Type: {licenseType}, IntID: {entityIntId}) status updated from {oldStatus} to {newStatus}.");
-
-            if (sendSignalRNotification)
-            {
-                var updatedRequestSummary = new RequestSummaryDto
-                {
-                    RequestId = publicId,
-                    RequestType = licenseType,
-                    ApplicantName = request.ApplicantName,
-                    ApplicantNID = request.ApplicantNID.ToString(),
-                    RequestDate = request.RequestDate,
-                    Status = newStatus,
-                    DetailsApiEndpoint = $"/api/admin/requests/license/{publicId}"
-                };
-                await _dashboardHubContext.Clients.Group("AdminGroup").ReceiveRequestUpdated(updatedRequestSummary);
-                await _dashboardHubContext.Clients.Group("AdminGroup").SendAdminNotification($"License Request {publicId} status changed to {newStatus}.");
-            }
-            return true;
-        }
-
-        public async Task<bool> ApproveLicenseRequestAsync(Guid id, UpdateRequestStatusInputDto input)
-        {
-            return await UpdateLicenseRequestStatusAsync(id, "Approved", input.Notes);
-        }
-
-        public async Task<bool> RejectLicenseRequestAsync(Guid id, UpdateRequestStatusInputDto input)
-        {
-            if (string.IsNullOrWhiteSpace(input.Notes)) return false;
-            return await UpdateLicenseRequestStatusAsync(id, "Rejected", input.Notes);
-        }
+      
+    
 
     }
 
@@ -379,9 +305,6 @@ namespace E_Government.Application.Services.Admin
             return Expression.Lambda<Func<T, bool>>
                   (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
         }
-
-
-      
     }
 
 

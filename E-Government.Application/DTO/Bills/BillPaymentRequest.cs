@@ -9,9 +9,9 @@ namespace E_Government.Application.DTO.Bills
    public class BillPaymentRequest
     {
         public int BillId { get; set; }
-        public string UserEmail { get; set; }
-
+        public string ? UserEmail { get; set; }
         public decimal Amount { get; set; }
+        public string PaymentCode { get; set; }
 
 
     }

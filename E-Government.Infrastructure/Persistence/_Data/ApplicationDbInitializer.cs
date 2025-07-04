@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_Government.Infrastructure.Persistence._Data
 {
-    public class ApplicationDbInitializer : IApplicationDbInitializer
+    public class ApplicationDbInitializer :IApplicationDbInitializer
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -19,7 +19,7 @@ namespace E_Government.Infrastructure.Persistence._Data
         }
         public async Task InitializerAsync()
         {
-            var pendingMigration = _dbContext.Database.GetPendingMigrations();
+              var pendingMigration = _dbContext.Database.GetPendingMigrations();
 
             if (pendingMigration.Any())
                 await _dbContext.Database.MigrateAsync();
@@ -27,7 +27,7 @@ namespace E_Government.Infrastructure.Persistence._Data
 
         public async Task SeedAsync()
         {
-            bool roleExists=await _roleManager.RoleExistsAsync("Admin");
+            bool roleExists = await _roleManager.RoleExistsAsync("Admin");
             if (!roleExists)
             {
                 var role = new IdentityRole("Admin");
@@ -41,15 +41,15 @@ namespace E_Government.Infrastructure.Persistence._Data
             {
                 user = new ApplicationUser
                 {
-                    NID="12345678901234", 
+                    NID = "30212151900498",
                     UserName = adminUserName,
-                    DisplayName="Islam Fawaz",
+                    DisplayName = "Islam Fawaz",
                     Email = adminEmail,
                     PhoneNumber = "0112334455",
                     EmailConfirmed = true,
                     Address = "Ismailila",
+                    Id = "30212151900498"
                 };
-                user.NID = user.Id;
 
                 var result = await _userManager.CreateAsync(user, "P@ssw0rd");
 

@@ -1,17 +1,9 @@
-﻿using E_Government.APIs.Controllers.Base;
-using E_Government.Application.DTO.Auth;
+﻿using E_Government.Application.DTO.Auth;
 using E_Government.Application.DTO.OTP;
-using E_Government.Application.DTO.User;
 using E_Government.Application.ServiceContracts;
-using E_Government.Application.Services.NIDValidation;
 using E_Government.Domain.DTO;
-using E_Government.Domain.ServiceContracts;
-using E_Government.Domain.ServiceContracts.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using ResetPasswordRequest = E_Government.Application.DTO.OTP.ResetPasswordRequest;
 
 namespace E_Government.APIs.Controllers
@@ -22,11 +14,13 @@ namespace E_Government.APIs.Controllers
     {
         private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
+        private readonly INIDValidationService _validationService;
 
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        public AuthController(IAuthService authService, ILogger<AuthController> logger,INIDValidationService validationService)
         {
             _authService = authService;
             _logger = logger;
+            _validationService = validationService;
         }
 
         /// <summary>
@@ -239,6 +233,14 @@ namespace E_Government.APIs.Controllers
                 success = true,
                 message = "تم تسجيل الخروج بنجاح"
             });
+        }
+
+        [HttpPost("validate")]
+        public IActionResult ValidateNationalId(string NID)
+        {
+            var result= _validationService.ValidateAndExtractNID(NID);
+
+            return Ok(result);
         }
     }
 }

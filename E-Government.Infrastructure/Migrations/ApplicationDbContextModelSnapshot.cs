@@ -25,9 +25,7 @@ namespace E_Government.Infrastructure.Migrations
             modelBuilder.Entity("E_Government.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("NID")
-                        .HasMaxLength(50)
-                        .HasColumnType("nchar(50)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -69,7 +67,8 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Id");
 
                     b.Property<DateTime?>("LastLoginDate")
                         .HasColumnType("datetime2");
@@ -144,48 +143,68 @@ namespace E_Government.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal>("CurrentReading")
+                    b.Property<decimal?>("CurrentReading")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("DueDate")
+                        .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<DateTime>("IssueDate")
+                    b.Property<DateTime?>("IssueDate")
+                        .IsRequired()
                         .HasColumnType("datetime");
 
-                    b.Property<int>("MeterId")
+                    b.Property<int?>("MeterId")
                         .HasColumnType("int");
 
+                    b.Property<string>("NID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("PaymentId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PdfUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<decimal>("PreviousReading")
+                    b.Property<decimal?>("PreviousReading")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ServiceCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("StripePaymentId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Type")
+                    b.Property<int?>("Type")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
+                    b.Property<decimal?>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UseNID")
                         .IsRequired()
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -195,6 +214,11 @@ namespace E_Government.Infrastructure.Migrations
                     b.HasIndex("DueDate");
 
                     b.HasIndex("MeterId");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique();
+
+                    b.HasIndex("ServiceCode");
 
                     b.HasIndex("Status");
 
@@ -229,7 +253,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("UserNID")
                         .IsRequired()
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -307,20 +331,30 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("ApplicantNID")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nchar(50)")
-                        .IsFixedLength();
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ApplicantName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("CopiesCount")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DetailsAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DocumentType")
                         .IsRequired()
@@ -332,6 +366,10 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("{}")
                         .HasColumnName("ExtraFields");
+
+                    b.Property<string>("Governorate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -398,318 +436,97 @@ namespace E_Government.Infrastructure.Migrations
                     b.ToTable("CivilDocumentRequestHistories");
                 });
 
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicense", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("ExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("IssueDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("LicenseType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MedicalTest")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PracticalTest")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TheoryTest")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("photo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DrivingLicenses");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicantNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
-
-                    b.Property<DateOnly>("CurrentExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("CurrentLicenseNumber")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MedicalCheckRequired")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NewExpirayDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("NewExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("NewPhoto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("RenewalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicantNID");
-
-                    b.ToTable("DrivingLicenseRenewals");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicantNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
-
-                    b.Property<string>("DamagedLicensePhoto")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LicenseType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OriginalLicenseNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PoliceReport")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("ReplacementFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicantNID");
-
-                    b.ToTable("LicenseReplacementRequests");
-                });
-
             modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequest", b =>
                 {
-                    b.Property<Guid>("PublicId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApplicantNID")
                         .IsRequired()
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
+                    b.Property<string>("ApplicantName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PublicId");
-
-                    b.HasIndex("ApplicantNID");
-
-                    b.ToTable("LicenseRequests");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.TrafficViolationPayment", b =>
-                {
-                    b.Property<int>("ViolationNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ViolationNumber"));
-
-                    b.Property<decimal>("FineAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("PaymentReceipt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("PlateNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("ViolationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ViolationType")
-                        .IsRequired()
-                        .HasMaxLength(50)
+                    b.Property<string>("ApplicationUserNID")
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ViolationNumber");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.ToTable("TrafficViolationPayments");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
-                {
-                    b.Property<int>("Id")
+                    b.Property<string>("ExtraFieldsJson")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicantNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
-
-                    b.Property<string>("InsuranceDocument")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("{}")
+                        .HasColumnName("ExtraFields");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("LicenseType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<decimal?>("PendingFines")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PlateNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("RenewalDate")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ServiceCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("TechnicalInspectionReport")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("UploadedDocumentUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("VehicleRegistrationNumber")
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserNID");
+
+                    b.ToTable("LicenseRequests", (string)null);
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequestHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicantNID");
+                    b.HasIndex("RequestId");
 
-                    b.ToTable("VehicleLicenseRenewals");
+                    b.ToTable("LicenseRequestHistories", (string)null);
                 });
 
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleOwner", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.ServicePrice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -717,50 +534,115 @@ namespace E_Government.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicantNID")
-                        .IsRequired()
-                        .HasColumnType("nchar(50)");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("ChassisNumber")
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ServiceCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("ServiceName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("InspectionReport")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InsuranceDocument")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ManufactureYear")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("OwnershipProof")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VehicleType")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicantNID");
+                    b.ToTable("ServicePrices");
 
-                    b.ToTable("VehicleOwners");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8374),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 100.00m,
+                            ServiceCode = "DRIVING_RENEW",
+                            ServiceName = "تجديد رخصة القيادة"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8383),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 120.00m,
+                            ServiceCode = "DRIVING_REPLACE_LOST",
+                            ServiceName = "بدل فاقد لرخصة القيادة"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8385),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 200.00m,
+                            ServiceCode = "DRIVING_NEW",
+                            ServiceName = "استخراج رخصة قيادة جديدة"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8386),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 80.00m,
+                            ServiceCode = "LICENSE_DIGITAL",
+                            ServiceName = "رخصة رقمية"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8387),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 150.00m,
+                            ServiceCode = "VEHICLE_RENEW",
+                            ServiceName = "تجديد رخصة مركبة"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8389),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 180.00m,
+                            ServiceCode = "VEHICLE_NEW",
+                            ServiceName = "رخصة مركبة جديدة"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8390),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 0.00m,
+                            ServiceCode = "TRAFFIC_FINE_VIEW",
+                            ServiceName = "الاستعلام عن مخالفات المرور"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2025, 7, 3, 22, 18, 59, 344, DateTimeKind.Utc).AddTicks(8391),
+                            Currency = "EGP",
+                            IsActive = true,
+                            Price = 50.00m,
+                            ServiceCode = "TRAFFIC_FINE_PAY",
+                            ServiceName = "دفع مخالفات المرور"
+                        });
                 });
 
             modelBuilder.Entity("E_Government.Domain.Entities.OTP.OtpCode", b =>
@@ -796,7 +678,7 @@ namespace E_Government.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -877,7 +759,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -899,7 +781,7 @@ namespace E_Government.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -911,7 +793,7 @@ namespace E_Government.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
@@ -926,7 +808,7 @@ namespace E_Government.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nchar(50)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -947,7 +829,12 @@ namespace E_Government.Infrastructure.Migrations
                     b.HasOne("E_Government.Domain.Entities.Bills.Meter", "Meter")
                         .WithMany("Bills")
                         .HasForeignKey("MeterId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("E_Government.Domain.Entities.Liscenses.LicenseRequest", "Request")
+                        .WithOne("Bill")
+                        .HasForeignKey("E_Government.Domain.Entities.Bills.Bill", "RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("E_Government.Domain.Entities.ApplicationUser", "User")
@@ -957,6 +844,8 @@ namespace E_Government.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Meter");
+
+                    b.Navigation("Request");
 
                     b.Navigation("User");
                 });
@@ -1014,59 +903,22 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.DrivingLicenseRenewal", b =>
-                {
-                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("DrivingLicenseRenewals")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseReplacementRequest", b =>
-                {
-                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("LicenseReplacementRequests")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
-                });
-
             modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequest", b =>
                 {
-                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany()
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
+                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", null)
+                        .WithMany("LicenseRequests")
+                        .HasForeignKey("ApplicationUserNID");
                 });
 
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleLicenseRenewal", b =>
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequestHistory", b =>
                 {
-                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("VehicleLicenseRenewals")
-                        .HasForeignKey("ApplicantNID")
+                    b.HasOne("E_Government.Domain.Entities.Liscenses.LicenseRequest", "Request")
+                        .WithMany("LicenseRequestHistories")
+                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Applicant");
-                });
-
-            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.VehicleOwner", b =>
-                {
-                    b.HasOne("E_Government.Domain.Entities.ApplicationUser", "Applicant")
-                        .WithMany("VehicleOwners")
-                        .HasForeignKey("ApplicantNID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Applicant");
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("E_Government.Domain.Entities.OTP.OtpCode", b =>
@@ -1133,19 +985,13 @@ namespace E_Government.Infrastructure.Migrations
                 {
                     b.Navigation("Bills");
 
-                    b.Navigation("DrivingLicenseRenewals");
-
-                    b.Navigation("LicenseReplacementRequests");
+                    b.Navigation("LicenseRequests");
 
                     b.Navigation("Meters");
 
                     b.Navigation("OtpCodes");
 
                     b.Navigation("Requests");
-
-                    b.Navigation("VehicleLicenseRenewals");
-
-                    b.Navigation("VehicleOwners");
                 });
 
             modelBuilder.Entity("E_Government.Domain.Entities.Bills.Meter", b =>
@@ -1160,6 +1006,14 @@ namespace E_Government.Infrastructure.Migrations
                     b.Navigation("Attachments");
 
                     b.Navigation("History");
+                });
+
+            modelBuilder.Entity("E_Government.Domain.Entities.Liscenses.LicenseRequest", b =>
+                {
+                    b.Navigation("Bill")
+                        .IsRequired();
+
+                    b.Navigation("LicenseRequestHistories");
                 });
 #pragma warning restore 612, 618
         }

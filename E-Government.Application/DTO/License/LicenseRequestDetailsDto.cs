@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace E_Government.Application.DTO.License
 {
-    public class LicenseRequestDetailsDto // Maps to DrivingLicense entity/DTO
+    public class LicenseRequestDetailsDto : BaseLicenseRequestDTO
     {
+
         public Guid Id { get; set; }
         public string ApplicantNID { get; set; }
         public string ApplicantName { get; set; }
@@ -19,11 +20,17 @@ namespace E_Government.Application.DTO.License
         public string MedicalTestStatus { get; set; }
         public string TheoryTestStatus { get; set; }
         public string PracticalTestStatus { get; set; }
-        public DateTime RequestDate { get; set; }
+        public DateTime ? RequestDate { get; set; }
         public string CurrentStatus { get; set; }
         public string LicenseNumber { get; set; } // If issued
         public DateTime? IssueDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
+        public string Governorate { get; set; }
+        public string District { get; set; }
+
+        public string DetailsAddress { get; set; }
+
+        public string City { get; set; }
         public List<RequestHistoryDto> History { get; set; }
     }
 }

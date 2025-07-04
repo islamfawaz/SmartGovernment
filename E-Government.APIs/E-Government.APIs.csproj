@@ -43,4 +43,8 @@
 		<ProjectReference Include="..\E-Government.Infrastructure\E-Government.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="uploads\general\" />
+	</ItemGroup>
+
 </Project>
