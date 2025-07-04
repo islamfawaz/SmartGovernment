@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_Government.Domain.Entities.Liscenses
 {
-    public class ServicePrice
+    public class  ServicePrice
     {
         public int Id { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public  string ServiceCode { get; set; }
+        public  string  ServiceCode { get; set; }
 
         [Required]
         [MaxLength(100)]

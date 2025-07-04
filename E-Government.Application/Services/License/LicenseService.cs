@@ -199,28 +199,38 @@ namespace E_Government.Application.Services.License
         }
         public async Task<bool> CompletePayment(string paymentIntentId)
         {
-            // Find bill by Stripe payment ID
-            // تم تغيير GetRepository<Bill,Guid> إلى GetRepository<Bill,int>
-            var bills = await _unitOfWork.GetRepository<Bill, int>().GetAllWithIncludeAsync(q => q.Where(b => b.StripePaymentId == paymentIntentId));
+            // Step 1: Find the bill using the Stripe payment ID
+            var bills = await _unitOfWork
+                .GetRepository<Bill, int>()
+                .GetAllWithIncludeAsync(q => q.Where(b => b.StripePaymentId == paymentIntentId));
 
             var bill = bills.FirstOrDefault();
+
             if (bill is null)
                 throw new NotFoundException($"Bill with Stripe Payment Id {paymentIntentId} is not found");
 
-            // Update bill status
+            // Step 2: Update the bill status
             bill.Status = BillStatus.Paid;
             bill.PaymentDate = DateTime.Now;
+
             _unitOfWork.GetRepository<Bill, int>().Update(bill);
 
-            // Update license request status
-            var request = await _unitOfWork.GetRepository<LicenseRequest, Guid>().GetAsync(bill.RequestId);
-
-            if (request is not null)
+            // Step 3: Update the license request status if it exists
+            if (bill.RequestId is Guid requestId)
             {
-                await UpdateLicenseRequestStatusAsync(request.Id, "Paid", request.Notes);
+                var request = await _unitOfWork
+                    .GetRepository<LicenseRequest, Guid>()
+                    .GetAsync(requestId);
+
+                if (request is not null)
+                {
+                    await UpdateLicenseRequestStatusAsync(request.Id, "Paid", request.Notes);
+                }
             }
 
+            // Step 4: Save changes to the database
             await _unitOfWork.CompleteAsync();
+
             _logger.LogInformation("Payment completed for bill {BillId}, request {RequestId}", bill.Id, bill.RequestId);
 
             return true;

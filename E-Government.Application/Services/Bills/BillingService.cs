@@ -112,6 +112,8 @@ namespace E_Government.Application.Services
                 // 6. Create bill with all required fields
                 var bill = new Bill
                 {
+                    NID=user.NID,
+                     ServiceCode= request.Type.ToString(),
                     BillNumber = await _billNumberGenerator.Generate(),
                     IssueDate = DateTime.UtcNow,
                     DueDate = DateTime.UtcNow.AddDays(30),
@@ -170,6 +172,7 @@ namespace E_Government.Application.Services
                     ClientSecret = paymentResult.ClientSecret,
                     Amount = bill.Amount,
                     BillNumber = bill.BillNumber
+
                 };
             }
             catch (DbUpdateException dbEx) when (dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 547)

@@ -47,8 +47,8 @@ namespace E_Government.Domain.Entities.Bills
 
         public string? PaymentId { get; set; }
 
-        public Guid RequestId { get; set; }
-        public LicenseRequest Request { get; set; }
+        public Guid? RequestId { get; set; } 
+        public LicenseRequest? Request { get; set; } 
 
 
 
