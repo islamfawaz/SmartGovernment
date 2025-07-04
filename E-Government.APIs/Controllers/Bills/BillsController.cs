@@ -59,7 +59,6 @@ namespace E_Government.APIs.Controllers.Bills
         }
 
 
-
         [HttpPost("generate-and-pay")]
         public async Task<IActionResult> GenerateAndPayBill([FromBody] GenerateBillRequestDto request)
         {
