@@ -1,0 +1,29 @@
+﻿[
+  {
+    "PaymentDate": "2023-01-10",
+    "Amount": 220,
+    "TransactionId": "PAY-001",
+    "Status": "Completed",
+    "ReceiptUrl": "/receipts/pay-001.pdf",
+    "BillId": 1,
+    "CustomerId": 1
+  },
+  {
+    "PaymentDate": "2023-01-12",
+    "Amount": 110,
+    "TransactionId": "PAY-002",
+    "Status": "Completed",
+    "ReceiptUrl": "/receipts/pay-002.pdf",
+    "BillId": 2,
+    "CustomerId": 1
+  },
+  {
+    "PaymentDate": "2023-03-01",
+    "Amount": 41.25,
+    "TransactionId": "PAY-003",
+    "Status": "Pending",
+    "ReceiptUrl": null,
+    "BillId": 4,
+    "CustomerId": 2
+  }
+]

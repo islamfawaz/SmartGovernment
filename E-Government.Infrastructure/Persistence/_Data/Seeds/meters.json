@@ -1,0 +1,34 @@
+﻿[
+  {
+    "MeterNumber": "ELE-1001",
+    "Type": "Electricity",
+    "IsActive": true,
+    "InstallationDate": "2020-01-15",
+    "InitialReading": 0,
+    "UserNID": "29801010101010"
+  },
+  {
+    "MeterNumber": "WAT-2001",
+    "Type": "Water",
+    "IsActive": true,
+    "InstallationDate": "2020-02-20",
+    "InitialReading": 0,
+    "UserNID": "29801010101010"
+  },
+  {
+    "MeterNumber": "GAS-3001",
+    "Type": "Gas",
+    "IsActive": true,
+    "InstallationDate": "2021-05-10",
+    "InitialReading": 0,
+    "UserNID": "29902020202020"
+  },
+  {
+    "MeterNumber": "ELE-1002",
+    "Type": "Electricity",
+    "IsActive": false,
+    "InstallationDate": "2019-11-05",
+    "InitialReading": 0,
+    "UserNID": "29902020202020"
+  }
+]

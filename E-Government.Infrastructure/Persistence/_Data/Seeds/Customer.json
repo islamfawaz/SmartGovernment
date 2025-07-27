@@ -1,0 +1,42 @@
+﻿[
+  {
+    "Name": "Ahmed Mohamed",
+    "Phone": "01001234567",
+    "NationalId": "29801010101010",
+    "Address": "15 Nile Street, Cairo, Egypt",
+    "Email": "ahmed.mohamed@example.com",
+    "AccountNumber": "EG100001",
+    "Category": "Residential",
+    "Status": "Active"
+  },
+  {
+    "Name": "Mona Ali",
+    "Phone": "01111234567",
+    "NationalId": "29902020202020",
+    "Address": "22 Alexandria Blvd, Alexandria, Egypt",
+    "Email": "mona.ali@example.com",
+    "AccountNumber": "EG100002",
+    "Category": "Residential",
+    "Status": "Active"
+  },
+  {
+    "Name": "Youssef Hassan",
+    "Phone": "01009876543",
+    "NationalId": "30003030303030",
+    "Address": "5 Tahrir Square, Giza, Egypt",
+    "Email": "youssef.h@example.com",
+    "AccountNumber": "EG100003",
+    "Category": "Commercial",
+    "Status": "Active"
+  },
+  {
+    "Name": "Fatima Mahmoud",
+    "Phone": "01233445566",
+    "NationalId": "30104040404040",
+    "Address": "8 Zamalek Tower, Cairo, Egypt",
+    "Email": "fatima.m@example.com",
+    "AccountNumber": "EG100004",
+    "Category": "Commercial",
+    "Status": "Active"
+  }
+]

@@ -1,0 +1,54 @@
+﻿[
+  {
+    "BillNumber": "ELE-202301-001",
+    "IssueDate": "2023-01-05T00:00:00",
+    "DueDate": "2023-01-25T00:00:00",
+    "PreviousReading": 1000.00,
+    "CurrentReading": 1250.00,
+    "Amount": 220.00,
+    "Status": "Paid",
+    "MeterId": 1,
+    "UserId": 1,
+    "PdfUrl": "https://storage.example.com/bills/ELE-202301-001.pdf",
+    "StripePaymentId": "pi_1Jm8Z2KZvQl4XyZwXZwXZwXZ"
+  },
+  {
+    "BillNumber": "WAT-202301-001",
+    "IssueDate": "2023-01-05T00:00:00",
+    "DueDate": "2023-01-25T00:00:00",
+    "PreviousReading": 30.00,
+    "CurrentReading": 50.00,
+    "Amount": 110.00,
+    "Status": "Paid",
+    "UserId": 2,
+    "CustomerId": 1,
+    "PdfUrl": "https://storage.example.com/bills/WAT-202301-001.pdf",
+    "StripePaymentId": "pi_2Jm8Z2KZvQl4XyZwXZwXZwXZ"
+  },
+  {
+    "BillNumber": "ELE-202302-001",
+    "IssueDate": "2023-02-05T00:00:00",
+    "DueDate": "2023-02-25T00:00:00",
+    "PreviousReading": 1250.00,
+    "CurrentReading": 1450.00,
+    "Amount": 176.00,
+    "Status": "Overdue",
+    "MeterId": 1,
+    "UserId": 1,
+    "PdfUrl": "https://storage.example.com/bills/ELE-202302-001.pdf",
+    "StripePaymentId": null
+  },
+  {
+    "BillNumber": "GAS-202303-001",
+    "IssueDate": "2023-03-05T00:00:00",
+    "DueDate": "2023-03-25T00:00:00",
+    "PreviousReading": 0.00,
+    "CurrentReading": 15.00,
+    "Amount": 41.25,
+    "Status": "Pending",
+    "MeterId": 3,
+    "UserId": 2,
+    "PdfUrl": null,
+    "StripePaymentId": null
+  }
+]
