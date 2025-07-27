@@ -1,0 +1,119 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Government.Domain", "E-Government.Core\E-Government.Domain.csproj", "{F17C0E69-7A01-4ED3-A755-B4B8255E26AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{249091BA-ECB2-44B4-AA58-8CFAE412AE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Government.Infrastructure", "E-Government.Infrastructure\E-Government.Infrastructure.csproj", "{C223A4B7-22D7-44AD-A4D1-CEBC916C738D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Government.APIs", "E-Government.APIs\E-Government.APIs.csproj", "{295A6D04-19B0-4792-B6A0-C9EF8CD1A355}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Government.Application", "E-Government.Application\E-Government.Application.csproj", "{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APIs", "APIs", "{840D5B46-99D5-4C4C-AB48-45782A90415C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{1FB8D0C1-37CD-4B0B-B8D0-23110A143035}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{B2D7A884-EE1F-426D-8BDB-B028FEF5DB6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{192C2966-2892-43F7-8723-F218097CDBBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{FFB7E712-D1E2-4B6C-A53F-69F40EF8DE1F}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\js\datatables-simple-demo.js = D:\Dashboard\js\datatables-simple-demo.js
+		D:\Dashboard\js\scripts.js = D:\Dashboard\js\scripts.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{90FFF578-7FAB-4F50-B9F4-1FC8CE9E99DB}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\css\styles.css = D:\Dashboard\css\styles.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{9D1CD948-446E-4092-8E5A-F22F24AD4902}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{4A0F5351-54A6-4410-83E6-4CF941E28020}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\assets\demo\chart-area-demo.js = D:\Dashboard\assets\demo\chart-area-demo.js
+		D:\Dashboard\assets\demo\chart-bar-demo.js = D:\Dashboard\assets\demo\chart-bar-demo.js
+		D:\Dashboard\assets\demo\chart-pie-demo.js = D:\Dashboard\assets\demo\chart-pie-demo.js
+		D:\Dashboard\assets\demo\datatables-demo.js = D:\Dashboard\assets\demo\datatables-demo.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{8BCA6B76-BD39-49E2-BDA5-2E80C178E68F}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\assets\img\error-404-monochrome.svg = D:\Dashboard\assets\img\error-404-monochrome.svg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdminDashboard", "AdminDashboard", "{269F2F59-3684-48CD-B4B0-DD844602FE33}"
+	ProjectSection(SolutionItems) = preProject
+		D:\Dashboard\401.html = D:\Dashboard\401.html
+		D:\Dashboard\404.html = D:\Dashboard\404.html
+		D:\Dashboard\500.html = D:\Dashboard\500.html
+		D:\Dashboard\charts.html = D:\Dashboard\charts.html
+		D:\Dashboard\index.html = D:\Dashboard\index.html
+		D:\Dashboard\layout-sidenav-light.html = D:\Dashboard\layout-sidenav-light.html
+		D:\Dashboard\layout-static.html = D:\Dashboard\layout-static.html
+		D:\Dashboard\login.html = D:\Dashboard\login.html
+		D:\Dashboard\password.html = D:\Dashboard\password.html
+		D:\Dashboard\register.html = D:\Dashboard\register.html
+		D:\Dashboard\tables.html = D:\Dashboard\tables.html
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Government.ModelTrainer", "E-Government.ModelTrainer\E-Government.ModelTrainer.csproj", "{68A622EF-C4F6-43ED-8253-2241632AE4A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F17C0E69-7A01-4ED3-A755-B4B8255E26AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F17C0E69-7A01-4ED3-A755-B4B8255E26AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F17C0E69-7A01-4ED3-A755-B4B8255E26AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F17C0E69-7A01-4ED3-A755-B4B8255E26AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C223A4B7-22D7-44AD-A4D1-CEBC916C738D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C223A4B7-22D7-44AD-A4D1-CEBC916C738D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C223A4B7-22D7-44AD-A4D1-CEBC916C738D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C223A4B7-22D7-44AD-A4D1-CEBC916C738D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{295A6D04-19B0-4792-B6A0-C9EF8CD1A355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{295A6D04-19B0-4792-B6A0-C9EF8CD1A355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{295A6D04-19B0-4792-B6A0-C9EF8CD1A355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{295A6D04-19B0-4792-B6A0-C9EF8CD1A355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68A622EF-C4F6-43ED-8253-2241632AE4A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68A622EF-C4F6-43ED-8253-2241632AE4A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68A622EF-C4F6-43ED-8253-2241632AE4A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68A622EF-C4F6-43ED-8253-2241632AE4A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F17C0E69-7A01-4ED3-A755-B4B8255E26AE} = {1FB8D0C1-37CD-4B0B-B8D0-23110A143035}
+		{C223A4B7-22D7-44AD-A4D1-CEBC916C738D} = {B2D7A884-EE1F-426D-8BDB-B028FEF5DB6F}
+		{295A6D04-19B0-4792-B6A0-C9EF8CD1A355} = {840D5B46-99D5-4C4C-AB48-45782A90415C}
+		{20CF026B-F1DD-ACC4-7EC4-87EC5D4AAADC} = {1FB8D0C1-37CD-4B0B-B8D0-23110A143035}
+		{840D5B46-99D5-4C4C-AB48-45782A90415C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1FB8D0C1-37CD-4B0B-B8D0-23110A143035} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B2D7A884-EE1F-426D-8BDB-B028FEF5DB6F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{192C2966-2892-43F7-8723-F218097CDBBD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{FFB7E712-D1E2-4B6C-A53F-69F40EF8DE1F} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{90FFF578-7FAB-4F50-B9F4-1FC8CE9E99DB} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{9D1CD948-446E-4092-8E5A-F22F24AD4902} = {269F2F59-3684-48CD-B4B0-DD844602FE33}
+		{4A0F5351-54A6-4410-83E6-4CF941E28020} = {9D1CD948-446E-4092-8E5A-F22F24AD4902}
+		{8BCA6B76-BD39-49E2-BDA5-2E80C178E68F} = {9D1CD948-446E-4092-8E5A-F22F24AD4902}
+		{269F2F59-3684-48CD-B4B0-DD844602FE33} = {192C2966-2892-43F7-8723-F218097CDBBD}
+		{68A622EF-C4F6-43ED-8253-2241632AE4A2} = {1FB8D0C1-37CD-4B0B-B8D0-23110A143035}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4E54BEF-C40E-41F3-8371-F6E90C71CAB1}
+	EndGlobalSection
+EndGlobal
